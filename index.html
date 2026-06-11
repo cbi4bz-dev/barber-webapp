@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-    <title>Барбершоп</title>
+    <title>Барбершоп - Админ</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
@@ -15,9 +15,6 @@
         }
         .container { max-width: 600px; margin: 0 auto; }
         h1 { font-size: 28px; margin-bottom: 8px; color: #ffd700; }
-        .subtitle { color: #aaa; margin-bottom: 20px; font-size: 14px; }
-        
-        /* Вкладки */
         .tabs {
             display: flex;
             gap: 10px;
@@ -29,78 +26,23 @@
             background: #16213e;
             border-radius: 30px;
             cursor: pointer;
-            transition: all 0.2s;
         }
         .tab.active {
             background: #ffd700;
             color: #1a1a2e;
             font-weight: bold;
         }
-        
-        /* Карточки */
-        .card {
-            background: #16213e;
-            border-radius: 20px;
-            padding: 20px;
-            margin-bottom: 20px;
-        }
-        .card-title { font-size: 18px; font-weight: 600; margin-bottom: 15px; color: #ffd700; }
-        
-        select, input, textarea {
-            width: 100%;
-            padding: 14px;
-            margin-bottom: 15px;
-            background: #0f3460;
-            border: none;
-            border-radius: 12px;
-            color: white;
-            font-size: 16px;
-            font-family: inherit;
-        }
-        button {
-            width: 100%;
-            padding: 16px;
-            background: #ffd700;
-            color: #1a1a2e;
-            border: none;
-            border-radius: 12px;
-            font-size: 18px;
-            font-weight: bold;
-            cursor: pointer;
-            transition: transform 0.2s;
-        }
-        button:active { transform: scale(0.98); }
-        button.danger { background: #e74c3c; color: white; }
-        button.secondary { background: #3498db; color: white; }
-        
-        .master-card, .service-item {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 12px;
-            background: #0f3460;
-            border-radius: 12px;
-            margin-bottom: 8px;
-            cursor: pointer;
-        }
-        .master-card.selected, .service-item.selected { background: #ffd700; color: #1a1a2e; }
-        
-        .time-slots { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 10px; }
-        .time-slot {
-            background: #0f3460;
-            padding: 10px 16px;
-            border-radius: 25px;
-            cursor: pointer;
-        }
-        .time-slot.selected { background: #ffd700; color: #1a1a2e; }
-        
         .booking-item {
             background: #0f3460;
             border-radius: 12px;
             padding: 12px;
             margin-bottom: 10px;
         }
-        .booking-time { font-size: 16px; font-weight: bold; color: #ffd700; }
+        .booking-time {
+            font-size: 16px;
+            font-weight: bold;
+            color: #ffd700;
+        }
         .booking-cancel {
             background: #e74c3c;
             border: none;
@@ -108,10 +50,8 @@
             border-radius: 20px;
             color: white;
             margin-top: 8px;
-            font-size: 12px;
             cursor: pointer;
         }
-        
         .stats-grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
@@ -129,79 +69,51 @@
             font-weight: bold;
             color: #ffd700;
         }
-        .stat-label { font-size: 12px; margin-top: 5px; }
-        
         .login-form { text-align: center; }
         .hidden { display: none; }
         .info-text { text-align: center; padding: 20px; color: #888; }
         .error { color: #e74c3c; text-align: center; margin-top: 10px; }
-        .success { color: #2ecc71; text-align: center; margin-top: 10px; }
         .loading { text-align: center; padding: 20px; color: #ffd700; }
+        input, button {
+            width: 100%;
+            padding: 14px;
+            margin-bottom: 15px;
+            background: #0f3460;
+            border: none;
+            border-radius: 12px;
+            color: white;
+            font-size: 16px;
+        }
+        button {
+            background: #ffd700;
+            color: #1a1a2e;
+            font-weight: bold;
+            cursor: pointer;
+        }
+        button.danger { background: #e74c3c; color: white; }
+        .date-badge {
+            background: #ffd700;
+            color: #1a1a2e;
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-size: 12px;
+            display: inline-block;
+            margin-bottom: 10px;
+        }
     </style>
 </head>
 <body>
     <div class="container">
-        <h1>✂️ BarberShop</h1>
+        <h1>✂️ BarberShop Admin</h1>
         
-        <!-- Вкладки -->
         <div class="tabs">
-            <div class="tab active" data-tab="booking">📝 Запись</div>
-            <div class="tab" data-tab="admin">👨‍💼 Админ</div>
+            <div class="tab active" data-admin-tab="today">📅 Сегодня</div>
+            <div class="tab" data-admin-tab="week">📆 Неделя</div>
+            <div class="tab" data-admin-tab="stats">📊 Статистика</div>
         </div>
         
-        <!-- Вкладка: Запись -->
-        <div id="booking-tab">
-            <div class="card">
-                <div class="card-title">👨‍🦰 Выбери мастера</div>
-                <div id="masters-list"></div>
-            </div>
-            <div class="card">
-                <div class="card-title">💇 Услуги</div>
-                <div id="services-list"></div>
-            </div>
-            <div class="card">
-                <div class="card-title">📅 Выбери дату</div>
-                <input type="date" id="date-input">
-            </div>
-            <div class="card">
-                <div class="card-title">⏰ Выбери время</div>
-                <div id="time-slots" class="time-slots">
-                    <div class="info-text">Сначала выберите мастера и дату</div>
-                </div>
-            </div>
-            <div class="card">
-                <div class="card-title">📞 Телефон (необязательно)</div>
-                <input type="tel" id="phone-input" placeholder="+7 123 456-78-90">
-            </div>
-            <div class="card">
-                <div class="card-title">💬 Комментарий</div>
-                <textarea id="comment-input" rows="2" placeholder="Пожелания к стрижке..."></textarea>
-            </div>
-            <button id="submit-btn">✅ Записаться</button>
-            <div id="booking-error" class="error hidden"></div>
-            <div id="booking-success" class="success hidden"></div>
-        </div>
-        
-        <!-- Вкладка: Админ (требует пароль) -->
-        <div id="admin-tab" class="hidden">
-            <div class="login-form" id="admin-login">
-                <div class="card">
-                    <div class="card-title">🔐 Вход в админ-панель</div>
-                    <input type="password" id="admin-password" placeholder="Пароль">
-                    <button id="login-btn">Войти</button>
-                    <div id="login-error" class="error hidden"></div>
-                </div>
-            </div>
-            <div id="admin-panel" class="hidden">
-                <div class="tabs admin-tabs">
-                    <div class="tab active" data-admin-tab="today">📅 Сегодня</div>
-                    <div class="tab" data-admin-tab="week">📆 Неделя</div>
-                    <div class="tab" data-admin-tab="stats">📊 Статистика</div>
-                </div>
-                <div id="admin-content">
-                    <div class="loading">Загрузка...</div>
-                </div>
-            </div>
+        <div id="admin-content">
+            <div class="loading">Загрузка...</div>
         </div>
     </div>
 
@@ -212,119 +124,90 @@
         tg.ready();
         
         const API_URL = "https://functions.yandexcloud.net/d4eho1fu83ho2dusd781";
-        const ADMIN_PASSWORD = "admin123";
         
-        // Данные
-        const masters = [
-            { id: "Алексей", name: "Алексей", spec: "Топ-мастер, 8 лет опыта", avatar: "✂️" },
-            { id: "Дмитрий", name: "Дмитрий", spec: "Борода и усы, 5 лет", avatar: "🧔" },
-            { id: "Максим", name: "Максим", spec: "Молодежные стрижки", avatar: "💈" }
-        ];
-        const services = [
-            { id: 1, name: "Мужская стрижка", price: 1500 },
-            { id: 2, name: "Борода (моделирование)", price: 1000 },
-            { id: 3, name: "Стрижка + борода", price: 2200 },
-            { id: 4, name: "Камуфляж седины", price: 800 }
-        ];
+        let allBookings = [];
         
-        let selectedMaster = null;
-        let selectedService = null;
-        let selectedDate = "";
-        let selectedTime = null;
-        let availableSlots = [];
-        
-        // Текущий админ
-        let isAdmin = false;
-        
-        const tomorrow = new Date();
-        tomorrow.setDate(tomorrow.getDate() + 1);
-        document.getElementById('date-input').min = tomorrow.toISOString().split('T')[0];
-        
-        // Переключение вкладок
-        document.querySelectorAll('.tab').forEach(tab => {
-            tab.addEventListener('click', () => {
-                const tabName = tab.dataset.tab;
-                document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-                tab.classList.add('active');
-                
-                if (tabName === 'booking') {
-                    document.getElementById('booking-tab').classList.remove('hidden');
-                    document.getElementById('admin-tab').classList.add('hidden');
-                } else {
-                    document.getElementById('booking-tab').classList.add('hidden');
-                    document.getElementById('admin-tab').classList.remove('hidden');
-                    if (isAdmin) {
-                        document.getElementById('admin-login').classList.add('hidden');
-                        document.getElementById('admin-panel').classList.remove('hidden');
-                        loadAdminToday();
-                    } else {
-                        document.getElementById('admin-login').classList.remove('hidden');
-                        document.getElementById('admin-panel').classList.add('hidden');
-                    }
-                }
+        // Загрузка всех записей
+        async function loadAllBookings() {
+            const response = await fetch(API_URL, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ action: 'getAllBookings' })
             });
-        });
+            const data = await response.json();
+            allBookings = data.bookings || [];
+            console.log('Loaded bookings:', allBookings.length);
+            return allBookings;
+        }
         
-        // Админ-логин
-        document.getElementById('login-btn').onclick = () => {
-            const password = document.getElementById('admin-password').value;
-            if (password === ADMIN_PASSWORD) {
-                isAdmin = true;
-                document.getElementById('admin-login').classList.add('hidden');
-                document.getElementById('admin-panel').classList.remove('hidden');
-                loadAdminToday();
-            } else {
-                document.getElementById('login-error').innerText = 'Неверный пароль';
-                document.getElementById('login-error').classList.remove('hidden');
-            }
-        };
-        
-        // Переключение админ-табов
-        document.querySelectorAll('[data-admin-tab]').forEach(tab => {
-            tab.addEventListener('click', () => {
-                const tabName = tab.dataset.adminTab;
-                document.querySelectorAll('[data-admin-tab]').forEach(t => t.classList.remove('active'));
-                tab.classList.add('active');
-                if (tabName === 'today') loadAdminToday();
-                else if (tabName === 'week') loadAdminWeek();
-                else if (tabName === 'stats') loadAdminStats();
-            });
-        });
-        
-        async function loadAdminToday() {
+        // Записи на сегодня
+        async function loadToday() {
             const container = document.getElementById('admin-content');
             container.innerHTML = '<div class="loading">Загрузка...</div>';
+            await loadAllBookings();
+            
             const today = new Date().toISOString().split('T')[0];
-            const bookings = await getBookingsByDate(today);
-            renderAdminBookings(container, bookings);
-        }
-        
-        async function loadAdminWeek() {
-            const container = document.getElementById('admin-content');
-            container.innerHTML = '<div class="loading">Загрузка...</div>';
-            const bookings = [];
-            for (let i = 0; i < 7; i++) {
-                const date = new Date();
-                date.setDate(date.getDate() + i);
-                const dateStr = date.toISOString().split('T')[0];
-                const dayBookings = await getBookingsByDate(dateStr);
-                bookings.push(...dayBookings);
+            const todayBookings = allBookings.filter(b => b.date === today && b.status !== 'cancelled');
+            
+            if (todayBookings.length === 0) {
+                container.innerHTML = '<div class="info-text">Нет записей на сегодня</div>';
+                return;
             }
-            renderAdminBookings(container, bookings, true);
+            
+            renderBookings(container, todayBookings);
         }
         
-        async function loadAdminStats() {
+        // Записи на неделю
+        async function loadWeek() {
             const container = document.getElementById('admin-content');
             container.innerHTML = '<div class="loading">Загрузка...</div>';
-            // Получаем все файлы из бакета (упрощённо)
-            const bookings = await getAllBookings();
-            const total = bookings.length;
-            const revenue = bookings.reduce((sum, b) => sum + (b.price || 0), 0);
+            await loadAllBookings();
+            
+            const today = new Date();
+            const weekLater = new Date(today);
+            weekLater.setDate(today.getDate() + 7);
+            
+            const weekBookings = allBookings.filter(b => {
+                const bookingDate = new Date(b.date);
+                return bookingDate >= today && bookingDate <= weekLater && b.status !== 'cancelled';
+            });
+            
+            if (weekBookings.length === 0) {
+                container.innerHTML = '<div class="info-text">Нет записей на эту неделю</div>';
+                return;
+            }
+            
+            // Группируем по дате
+            const grouped = {};
+            weekBookings.forEach(b => {
+                if (!grouped[b.date]) grouped[b.date] = [];
+                grouped[b.date].push(b);
+            });
+            
+            let html = '';
+            for (const [date, bookings] of Object.entries(grouped).sort()) {
+                html += `<div class="date-badge">📆 ${date}</div>`;
+                html += renderBookingsList(bookings);
+            }
+            container.innerHTML = html;
+            attachCancelEvents();
+        }
+        
+        // Статистика
+        async function loadStats() {
+            const container = document.getElementById('admin-content');
+            container.innerHTML = '<div class="loading">Загрузка...</div>';
+            await loadAllBookings();
+            
+            const activeBookings = allBookings.filter(b => b.status !== 'cancelled');
+            const total = activeBookings.length;
+            const revenue = activeBookings.reduce((sum, b) => sum + (b.price || 0), 0);
+            
             const serviceCount = {};
-            bookings.forEach(b => {
+            activeBookings.forEach(b => {
                 serviceCount[b.service] = (serviceCount[b.service] || 0) + 1;
             });
-            const topService = Object.entries(serviceCount).sort((a,b) => b[1] - a[1])[0];
+            const topService = Object.entries(serviceCount).sort((a, b) => b[1] - a[1])[0];
             
             container.innerHTML = `
                 <div class="stats-grid">
@@ -336,199 +219,68 @@
             `;
         }
         
-        async function getBookingsByDate(date) {
-            // Здесь нужно реализовать получение записей из бакета через API
-            // Пока возвращаем тестовые данные
-            return [];
+        function renderBookings(container, bookings) {
+            container.innerHTML = renderBookingsList(bookings);
+            attachCancelEvents();
         }
         
-        async function getAllBookings() {
-            return [];
-        }
-        
-        function renderAdminBookings(container, bookings, showDate = false) {
-            if (bookings.length === 0) {
-                container.innerHTML = '<div class="info-text">Нет записей</div>';
-                return;
-            }
+        function renderBookingsList(bookings) {
             let html = '';
             for (const b of bookings) {
                 html += `
-                    <div class="booking-item">
+                    <div class="booking-item" data-id="${b.booking_id}">
                         <div class="booking-time">${b.time}</div>
                         <div><strong>${b.client_name}</strong> — ${b.service}</div>
-                        <div>Мастер: ${b.master}</div>
+                        <div>👨‍🦰 Мастер: ${b.master}</div>
                         <div>📞 ${b.client_phone || 'не указан'}</div>
-                        <button class="booking-cancel" data-id="${b.booking_id}">Отменить</button>
+                        <div>💬 ${b.comment || 'без комментария'}</div>
+                        <button class="booking-cancel" data-id="${b.booking_id}">❌ Отменить</button>
                     </div>
                 `;
             }
-            container.innerHTML = html;
+            return html;
+        }
+        
+        function attachCancelEvents() {
             document.querySelectorAll('.booking-cancel').forEach(btn => {
-                btn.onclick = () => cancelBooking(btn.dataset.id);
-            });
-        }
-        
-        async function cancelBooking(bookingId) {
-            if (confirm('Отменить запись?')) {
-                // TODO: реализовать отмену
-                alert('Отмена записи временно недоступна');
-            }
-        }
-        
-        function renderMasters() {
-            const container = document.getElementById('masters-list');
-            container.innerHTML = '';
-            masters.forEach(master => {
-                const div = document.createElement('div');
-                div.className = `master-card ${selectedMaster?.id === master.id ? 'selected' : ''}`;
-                div.onclick = () => {
-                    selectedMaster = master;
-                    renderMasters();
-                    if (selectedDate) loadFreeSlots();
+                btn.onclick = async () => {
+                    const bookingId = btn.dataset.id;
+                    if (confirm('Отменить запись?')) {
+                        const response = await fetch(API_URL, {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({ action: 'cancelBooking', bookingId: bookingId })
+                        });
+                        const result = await response.json();
+                        if (result.success) {
+                            alert('Запись отменена');
+                            // Перезагружаем текущую вкладку
+                            const activeTab = document.querySelector('[data-admin-tab].active').dataset.adminTab;
+                            if (activeTab === 'today') loadToday();
+                            else if (activeTab === 'week') loadWeek();
+                            else loadStats();
+                        } else {
+                            alert('Ошибка отмены');
+                        }
+                    }
                 };
-                div.innerHTML = `
-                    <div class="master-avatar" style="font-size:24px">${master.avatar}</div>
-                    <div style="flex:1"><strong>${master.name}</strong><br><small>${master.spec}</small></div>
-                `;
-                container.appendChild(div);
             });
         }
         
-        function renderServices() {
-            const container = document.getElementById('services-list');
-            container.innerHTML = '';
-            services.forEach(service => {
-                const div = document.createElement('div');
-                div.className = `service-item ${selectedService?.id === service.id ? 'selected' : ''}`;
-                div.onclick = () => {
-                    selectedService = service;
-                    renderServices();
-                };
-                div.innerHTML = `
-                    <span>${service.name}</span>
-                    <span><strong>${service.price}₽</strong></span>
-                `;
-                container.appendChild(div);
+        // Переключение вкладок
+        document.querySelectorAll('[data-admin-tab]').forEach(tab => {
+            tab.addEventListener('click', () => {
+                document.querySelectorAll('[data-admin-tab]').forEach(t => t.classList.remove('active'));
+                tab.classList.add('active');
+                const tabName = tab.dataset.adminTab;
+                if (tabName === 'today') loadToday();
+                else if (tabName === 'week') loadWeek();
+                else if (tabName === 'stats') loadStats();
             });
-        }
-        
-        function renderTimeSlots() {
-            const container = document.getElementById('time-slots');
-            if (!selectedMaster) {
-                container.innerHTML = '<div class="info-text">Сначала выберите мастера</div>';
-                return;
-            }
-            if (!selectedDate) {
-                container.innerHTML = '<div class="info-text">Сначала выберите дату</div>';
-                return;
-            }
-            if (availableSlots.length === 0) {
-                container.innerHTML = '<div class="info-text">Нет свободных слотов</div>';
-                return;
-            }
-            container.innerHTML = '';
-            availableSlots.forEach(slot => {
-                const span = document.createElement('span');
-                span.className = `time-slot ${selectedTime === slot ? 'selected' : ''}`;
-                span.innerText = slot;
-                span.onclick = () => {
-                    selectedTime = slot;
-                    renderTimeSlots();
-                };
-                container.appendChild(span);
-            });
-        }
-        
-        async function loadFreeSlots() {
-            if (!selectedMaster || !selectedDate) return;
-            const container = document.getElementById('time-slots');
-            container.innerHTML = '<div class="loading">Загрузка...</div>';
-            try {
-                const response = await fetch(API_URL, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        action: 'getFreeSlots',
-                        date: selectedDate,
-                        masterId: selectedMaster.id
-                    })
-                });
-                const data = await response.json();
-                availableSlots = data.slots || [];
-                renderTimeSlots();
-            } catch (err) {
-                container.innerHTML = '<div class="error">Ошибка загрузки</div>';
-            }
-        }
-        
-        async function submitBooking() {
-            if (!selectedMaster || !selectedService || !selectedDate || !selectedTime) {
-                showError('Заполните все поля!', 'booking');
-                return;
-            }
-            
-            const booking = {
-                master: selectedMaster.name,
-                service: selectedService.name,
-                price: selectedService.price,
-                date: selectedDate,
-                time: selectedTime,
-                client_name: tg.initDataUnsafe?.user?.first_name || 'Гость',
-                client_username: tg.initDataUnsafe?.user?.username || '',
-                client_id: tg.initDataUnsafe?.user?.id || 0,
-                client_phone: document.getElementById('phone-input').value,
-                comment: document.getElementById('comment-input').value
-            };
-            
-            const btn = document.getElementById('submit-btn');
-            btn.innerText = 'Отправка...';
-            btn.disabled = true;
-            
-            try {
-                const response = await fetch(API_URL, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ action: 'book', booking: booking })
-                });
-                const result = await response.json();
-                
-                if (result.success) {
-                    showSuccess('✅ Запись создана!', 'booking');
-                    setTimeout(() => tg.close(), 2000);
-                } else {
-                    throw new Error('Ошибка');
-                }
-            } catch (err) {
-                showError('Ошибка при записи', 'booking');
-            } finally {
-                btn.innerText = '✅ Записаться';
-                btn.disabled = false;
-            }
-        }
-        
-        function showError(msg, type) {
-            const el = type === 'booking' ? document.getElementById('booking-error') : document.getElementById('login-error');
-            el.innerText = msg;
-            el.classList.remove('hidden');
-            setTimeout(() => el.classList.add('hidden'), 3000);
-        }
-        
-        function showSuccess(msg, type) {
-            const el = document.getElementById('booking-success');
-            el.innerText = msg;
-            el.classList.remove('hidden');
-            setTimeout(() => el.classList.add('hidden'), 3000);
-        }
-        
-        document.getElementById('date-input').addEventListener('change', (e) => {
-            selectedDate = e.target.value;
-            if (selectedMaster) loadFreeSlots();
         });
-        document.getElementById('submit-btn').onclick = submitBooking;
         
-        renderMasters();
-        renderServices();
+        // Загружаем сегодняшние записи при старте
+        loadToday();
     </script>
 </body>
 </html>
