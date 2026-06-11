@@ -13,7 +13,7 @@
             padding: 20px;
             min-height: 100vh;
         }
-        .container { max-width: 600px; margin: 0 auto; }
+        .container { max-width: 700px; margin: 0 auto; }
         h1 { font-size: 28px; margin-bottom: 8px; color: #ffd700; }
         .tabs {
             display: flex;
@@ -117,6 +117,23 @@
         .error { color: #e74c3c; text-align: center; margin-top: 10px; }
         .success { color: #2ecc71; text-align: center; margin-top: 10px; }
         .loading { text-align: center; padding: 20px; color: #ffd700; }
+        .client-item {
+            background: #0f3460;
+            border-radius: 12px;
+            padding: 12px;
+            margin-bottom: 10px;
+            cursor: pointer;
+            transition: transform 0.1s;
+        }
+        .client-item:hover {
+            transform: scale(1.01);
+            background: #1a4a7a;
+        }
+        .back-btn {
+            background: #3498db;
+            color: white;
+            margin-bottom: 15px;
+        }
     </style>
 </head>
 <body>
@@ -134,9 +151,10 @@
         
         <div id="admin-section" class="hidden">
             <div class="tabs">
-                <div class="tab active" data-tab="all">📋 Все записи</div>
+                <div class="tab" data-tab="all">📋 Все записи</div>
                 <div class="tab" data-tab="today">📅 Сегодня</div>
-                <div class="tab" data-tab="slots">⏰ Управление слотами</div>
+                <div class="tab" data-tab="clients">👥 Клиенты</div>
+                <div class="tab" data-tab="slots">⏰ Слоты</div>
                 <div class="tab" data-tab="stats">📊 Статистика</div>
             </div>
             <div id="content">
@@ -167,6 +185,9 @@
             if (password === ADMIN_PASSWORD) {
                 document.getElementById('login-section').classList.add('hidden');
                 document.getElementById('admin-section').classList.remove('hidden');
+                // Устанавливаем активную вкладку по умолчанию
+                document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+                document.querySelector('[data-tab="all"]').classList.add('active');
                 showAllBookings();
             } else {
                 document.getElementById('login-error').innerText = 'Неверный пароль';
@@ -174,6 +195,7 @@
             }
         };
         
+        // Переключение вкладок
         document.querySelectorAll('[data-tab]').forEach(tab => {
             tab.addEventListener('click', () => {
                 document.querySelectorAll('[data-tab]').forEach(t => t.classList.remove('active'));
@@ -181,10 +203,13 @@
                 const tabName = tab.dataset.tab;
                 if (tabName === 'all') showAllBookings();
                 else if (tabName === 'today') showTodayBookings();
+                else if (tabName === 'clients') showClients();
                 else if (tabName === 'slots') showSlotsManager();
                 else if (tabName === 'stats') showStats();
             });
         });
+        
+        // ============ ЗАПИСИ ============
         
         async function loadAllBookings() {
             const response = await fetch(API_URL, {
@@ -286,6 +311,97 @@
             });
         }
         
+        // ============ КЛИЕНТЫ (CRM) ============
+        
+        async function showClients() {
+            const container = document.getElementById('content');
+            container.innerHTML = '<div class="loading">Загрузка...</div>';
+            
+            const response = await fetch(API_URL, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ action: 'getAllClients' })
+            });
+            const data = await response.json();
+            const clients = data.clients || [];
+            
+            if (clients.length === 0) {
+                container.innerHTML = '<div class="info-text">Нет клиентов</div>';
+                return;
+            }
+            
+            let html = '<div class="card"><div class="card-title">👥 Все клиенты</div>';
+            for (const c of clients) {
+                const lastVisit = c.last_visit ? c.last_visit.split('T')[0] : '-';
+                html += `
+                    <div class="client-item" onclick="showClientDetail('${c.client_id}')">
+                        <div><strong>${c.name || 'Гость'}</strong> ${c.username ? '@' + c.username : ''}</div>
+                        <div>📞 ${c.phone || 'не указан'}</div>
+                        <div>✂️ ${c.total_visits} визитов | 💰 ${c.total_spent}₽</div>
+                        <div>📅 Последний визит: ${lastVisit}</div>
+                        <div>⭐ Любимый мастер: ${c.preferred_master || '-'}</div>
+                    </div>
+                `;
+            }
+            html += '</div>';
+            container.innerHTML = html;
+        }
+        
+        async function showClientDetail(clientId) {
+            const container = document.getElementById('content');
+            container.innerHTML = '<div class="loading">Загрузка...</div>';
+            
+            const response = await fetch(API_URL, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ action: 'getClient', clientId: clientId })
+            });
+            const data = await response.json();
+            const client = data.client;
+            
+            if (!client) {
+                container.innerHTML = '<div class="info-text">Клиент не найден</div>';
+                return;
+            }
+            
+            // Получаем записи клиента
+            await loadAllBookings();
+            const clientBookings = allBookings.filter(b => b.client_id == clientId && b.status !== 'cancelled');
+            
+            let bookingsHtml = '';
+            for (const b of clientBookings) {
+                bookingsHtml += `
+                    <div style="background:#0f3460; padding:10px; border-radius:10px; margin-bottom:8px;">
+                        <div>📅 ${b.date} в ${b.time} — ${b.service} (${b.price}₽)</div>
+                        <div>👨‍🦰 Мастер: ${b.master}</div>
+                    </div>
+                `;
+            }
+            
+            container.innerHTML = `
+                <button class="back-btn" onclick="showClients()">← Назад к списку</button>
+                <div class="card">
+                    <div class="card-title">👤 ${client.name || 'Гость'}</div>
+                    <div><strong>Telegram ID:</strong> ${client.client_id}</div>
+                    <div><strong>Username:</strong> ${client.username ? '@' + client.username : '-'}</div>
+                    <div><strong>Телефон:</strong> ${client.phone || 'не указан'}</div>
+                    <div><strong>Дата регистрации:</strong> ${client.registered_at ? client.registered_at.split('T')[0] : '-'}</div>
+                    <div><strong>Последний визит:</strong> ${client.last_visit ? client.last_visit.split('T')[0] + ' в ' + client.last_visit.split('T')[1]?.slice(0,5) : '-'}</div>
+                    <div><strong>Всего визитов:</strong> ${client.total_visits}</div>
+                    <div><strong>Общая сумма:</strong> ${client.total_spent}₽</div>
+                    <div><strong>Любимый мастер:</strong> ${client.preferred_master || '-'}</div>
+                    <div><strong>Любимая услуга:</strong> ${client.preferred_service || '-'}</div>
+                    <div><strong>Заметки:</strong> ${client.notes || '-'}</div>
+                </div>
+                <div class="card">
+                    <div class="card-title">📋 История записей</div>
+                    ${bookingsHtml || '<div class="info-text">Нет записей</div>'}
+                </div>
+            `;
+        }
+        
+        // ============ УПРАВЛЕНИЕ СЛОТАМИ ============
+        
         async function showSlotsManager() {
             const container = document.getElementById('content');
             const mastersList = masters.map(m => `<option value="${m.name}">${m.name}</option>`).join('');
@@ -374,6 +490,8 @@
             });
         }
         
+        // ============ СТАТИСТИКА ============
+        
         async function showStats() {
             const container = document.getElementById('content');
             container.innerHTML = '<div class="loading">Загрузка...</div>';
@@ -389,8 +507,8 @@
                 <div class="stats-grid">
                     <div class="stat-card"><div class="stat-number">${stats.total || 0}</div><div class="stat-label">Всего записей</div></div>
                     <div class="stat-card"><div class="stat-number">${stats.revenue || 0}₽</div><div class="stat-label">Выручка</div></div>
+                    <div class="stat-card"><div class="stat-number">${stats.totalClients || 0}</div><div class="stat-label">Клиентов</div></div>
                     <div class="stat-card"><div class="stat-number">${stats.topService ? stats.topService.name : '-'}</div><div class="stat-label">Самая популярная</div></div>
-                    <div class="stat-card"><div class="stat-number">${stats.topService ? stats.topService.count : 0}</div><div class="stat-label">Записей</div></div>
                 </div>
             `;
         }
