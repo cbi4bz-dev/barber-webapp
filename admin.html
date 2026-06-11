@@ -163,12 +163,7 @@
         </div>
     </div>
 
-    <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <script>
-        const tg = window.Telegram.WebApp;
-        tg.expand();
-        tg.ready();
-        
         const API_URL = "https://functions.yandexcloud.net/d4eho1fu83ho2dusd781";
         const ADMIN_PASSWORD = "admin123";
         
@@ -185,7 +180,6 @@
             if (password === ADMIN_PASSWORD) {
                 document.getElementById('login-section').classList.add('hidden');
                 document.getElementById('admin-section').classList.remove('hidden');
-                // Устанавливаем активную вкладку по умолчанию
                 document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
                 document.querySelector('[data-tab="all"]').classList.add('active');
                 showAllBookings();
@@ -195,7 +189,6 @@
             }
         };
         
-        // Переключение вкладок
         document.querySelectorAll('[data-tab]').forEach(tab => {
             tab.addEventListener('click', () => {
                 document.querySelectorAll('[data-tab]').forEach(t => t.classList.remove('active'));
@@ -208,8 +201,6 @@
                 else if (tabName === 'stats') showStats();
             });
         });
-        
-        // ============ ЗАПИСИ ============
         
         async function loadAllBookings() {
             const response = await fetch(API_URL, {
@@ -311,7 +302,7 @@
             });
         }
         
-        // ============ КЛИЕНТЫ (CRM) ============
+        // ============ КЛИЕНТЫ ============
         
         async function showClients() {
             const container = document.getElementById('content');
@@ -364,7 +355,6 @@
                 return;
             }
             
-            // Получаем записи клиента
             await loadAllBookings();
             const clientBookings = allBookings.filter(b => b.client_id == clientId && b.status !== 'cancelled');
             
