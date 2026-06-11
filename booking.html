@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>Запись в барбершоп</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            background: #1a1a2e;
+            color: #eee;
+            padding: 20px;
+            min-height: 100vh;
+        }
+        .container { max-width: 500px; margin: 0 auto; }
+        h1 { font-size: 28px; margin-bottom: 8px; color: #ffd700; }
+        .subtitle { color: #aaa; margin-bottom: 30px; font-size: 14px; }
+        .card {
+            background: #16213e;
+            border-radius: 20px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+        .card-title { font-size: 18px; font-weight: 600; margin-bottom: 15px; color: #ffd700; }
+        select, input, textarea {
+            width: 100%;
+            padding: 14px;
+            margin-bottom: 15px;
+            background: #0f3460;
+            border: none;
+            border-radius: 12px;
+            color: white;
+            font-size: 16px;
+        }
+        button {
+            width: 100%;
+            padding: 16px;
+            background: #ffd700;
+            color: #1a1a2e;
+            border: none;
+            border-radius: 12px;
+            font-size: 18px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+        button:active { transform: scale(0.98); }
+        .master-card, .service-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 12px;
+            background: #0f3460;
+            border-radius: 12px;
+            margin-bottom: 8px;
+            cursor: pointer;
+        }
+        .master-card.selected, .service-item.selected { background: #ffd700; color: #1a1a2e; }
+        .time-slots { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 10px; }
+        .time-slot {
+            background: #0f3460;
+            padding: 10px 16px;
+            border-radius: 25px;
+            cursor: pointer;
+        }
+        .time-slot.selected { background: #ffd700; color: #1a1a2e; }
+        .loading { text-align: center; padding: 20px; color: #ffd700; }
+        .hidden { display: none; }
+        .info-text { text-align: center; padding: 20px; color: #888; }
+        .error { color: #ff6b6b; text-align: center; margin-top: 10px; }
+        .success { color: #6bff6b; text-align: center; margin-top: 10px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>✂️ BarberShop</h1>
+        <div class="subtitle">Запишись к лучшим барберам</div>
+
+        <div class="card">
+            <div class="card-title">👨‍🦰 Выбери мастера</div>
+            <div id="masters-list"></div>
+        </div>
+
+        <div class="card">
+            <div class="card-title">💇 Услуги</div>
+            <div id="services-list"></div>
+        </div>
+
+        <div class="card">
+            <div class="card-title">📅 Выбери дату</div>
+            <input type="date" id="date-input">
+        </div>
+
+        <div class="card">
+            <div class="card-title">⏰ Выбери время</div>
+            <div id="time-slots" class="time-slots">
+                <div class="info-text">Сначала выберите мастера и дату</div>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-title">📞 Телефон (необязательно)</div>
+            <input type="tel" id="phone-input" placeholder="+7 123 456-78-90">
+        </div>
+
+        <div class="card">
+            <div class="card-title">💬 Комментарий</div>
+            <textarea id="comment-input" rows="2" placeholder="Пожелания к стрижке..."></textarea>
+        </div>
+
+        <button id="submit-btn">✅ Записаться</button>
+        <div id="error" class="error hidden"></div>
+        <div id="success" class="success hidden"></div>
+    </div>
+
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <script>
+        const tg = window.Telegram.WebApp;
+        tg.expand();
+        tg.ready();
+        
+        const API_URL = "https://functions.yandexcloud.net/d4eho1fu83ho2dusd781";
+        
+        const masters = [
+            { id: "Алексей", name: "Алексей", spec: "Топ-мастер, 8 лет опыта", avatar: "✂️" },
+            { id: "Дмитрий", name: "Дмитрий", spec: "Борода и усы, 5 лет", avatar: "🧔" },
+            { id: "Максим", name: "Максим", spec: "Молодежные стрижки", avatar: "💈" }
+        ];
+        const services = [
+            { id: 1, name: "Мужская стрижка", price: 1500 },
+            { id: 2, name: "Борода (моделирование)", price: 1000 },
+            { id: 3, name: "Стрижка + борода", price: 2200 },
+            { id: 4, name: "Камуфляж седины", price: 800 }
+        ];
+        
+        let selectedMaster = null;
+        let selectedService = null;
+        let selectedDate = "";
+        let selectedTime = null;
+        let availableSlots = [];
+        
+        const tomorrow = new Date();
+        tomorrow.setDate(tomorrow.getDate() + 1);
+        document.getElementById('date-input').min = tomorrow.toISOString().split('T')[0];
+        
+        function renderMasters() {
+            const container = document.getElementById('masters-list');
+            container.innerHTML = '';
+            masters.forEach(master => {
+                const div = document.createElement('div');
+                div.className = `master-card ${selectedMaster?.id === master.id ? 'selected' : ''}`;
+                div.onclick = () => {
+                    selectedMaster = master;
+                    renderMasters();
+                    if (selectedDate) loadFreeSlots();
+                };
+                div.innerHTML = `
+                    <div style="font-size:24px">${master.avatar}</div>
+                    <div style="flex:1"><strong>${master.name}</strong><br><small>${master.spec}</small></div>
+                `;
+                container.appendChild(div);
+            });
+        }
+        
+        function renderServices() {
+            const container = document.getElementById('services-list');
+            container.innerHTML = '';
+            services.forEach(service => {
+                const div = document.createElement('div');
+                div.className = `service-item ${selectedService?.id === service.id ? 'selected' : ''}`;
+                div.onclick = () => {
+                    selectedService = service;
+                    renderServices();
+                };
+                div.innerHTML = `
+                    <span>${service.name}</span>
+                    <span><strong>${service.price}₽</strong></span>
+                `;
+                container.appendChild(div);
+            });
+        }
+        
+        function renderTimeSlots() {
+            const container = document.getElementById('time-slots');
+            if (!selectedMaster) {
+                container.innerHTML = '<div class="info-text">Сначала выберите мастера</div>';
+                return;
+            }
+            if (!selectedDate) {
+                container.innerHTML = '<div class="info-text">Сначала выберите дату</div>';
+                return;
+            }
+            if (availableSlots.length === 0) {
+                container.innerHTML = '<div class="info-text">Нет свободных слотов на эту дату</div>';
+                return;
+            }
+            container.innerHTML = '';
+            availableSlots.forEach(slot => {
+                const span = document.createElement('span');
+                span.className = `time-slot ${selectedTime === slot ? 'selected' : ''}`;
+                span.innerText = slot;
+                span.onclick = () => {
+                    selectedTime = slot;
+                    renderTimeSlots();
+                };
+                container.appendChild(span);
+            });
+        }
+        
+        async function loadFreeSlots() {
+            if (!selectedMaster || !selectedDate) return;
+            const container = document.getElementById('time-slots');
+            container.innerHTML = '<div class="loading">Загрузка...</div>';
+            try {
+                const response = await fetch(API_URL, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        action: 'getFreeSlots',
+                        date: selectedDate,
+                        masterId: selectedMaster.id
+                    })
+                });
+                const data = await response.json();
+                availableSlots = data.slots || [];
+                renderTimeSlots();
+            } catch (err) {
+                container.innerHTML = '<div class="error">Ошибка загрузки</div>';
+            }
+        }
+        
+        async function submitBooking() {
+            if (!selectedMaster || !selectedService || !selectedDate || !selectedTime) {
+                showError('Заполните все поля!');
+                return;
+            }
+            
+            const booking = {
+                master: selectedMaster.name,
+                service: selectedService.name,
+                price: selectedService.price,
+                date: selectedDate,
+                time: selectedTime,
+                client_name: tg.initDataUnsafe?.user?.first_name || 'Гость',
+                client_username: tg.initDataUnsafe?.user?.username || '',
+                client_id: tg.initDataUnsafe?.user?.id || 0,
+                client_phone: document.getElementById('phone-input').value,
+                comment: document.getElementById('comment-input').value
+            };
+            
+            const btn = document.getElementById('submit-btn');
+            btn.innerText = 'Отправка...';
+            btn.disabled = true;
+            
+            try {
+                const response = await fetch(API_URL, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ action: 'book', booking: booking })
+                });
+                const result = await response.json();
+                
+                if (result.success) {
+                    const successDiv = document.getElementById('success');
+                    successDiv.innerHTML = '✅ Запись создана! Ждём вас!';
+                    successDiv.classList.remove('hidden');
+                    setTimeout(() => tg.close(), 2000);
+                } else {
+                    throw new Error('Ошибка');
+                }
+            } catch (err) {
+                showError('Ошибка при записи');
+            } finally {
+                btn.innerText = '✅ Записаться';
+                btn.disabled = false;
+            }
+        }
+        
+        function showError(msg) {
+            const errorDiv = document.getElementById('error');
+            errorDiv.innerText = msg;
+            errorDiv.classList.remove('hidden');
+            setTimeout(() => errorDiv.classList.add('hidden'), 3000);
+        }
+        
+        document.getElementById('date-input').addEventListener('change', (e) => {
+            selectedDate = e.target.value;
+            if (selectedMaster) loadFreeSlots();
+        });
+        document.getElementById('submit-btn').onclick = submitBooking;
+        
+        renderMasters();
+        renderServices();
+    </script>
+</body>
+</html>
