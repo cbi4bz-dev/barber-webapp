@@ -74,7 +74,7 @@
         .info-text { text-align: center; padding: 20px; color: #888; }
         .error { color: #e74c3c; text-align: center; margin-top: 10px; }
         .loading { text-align: center; padding: 20px; color: #ffd700; }
-        input, button {
+        .admin-password {
             width: 100%;
             padding: 14px;
             margin-bottom: 15px;
@@ -85,12 +85,16 @@
             font-size: 16px;
         }
         button {
+            width: 100%;
+            padding: 14px;
             background: #ffd700;
             color: #1a1a2e;
+            border: none;
+            border-radius: 12px;
+            font-size: 16px;
             font-weight: bold;
             cursor: pointer;
         }
-        button.danger { background: #e74c3c; color: white; }
         .date-badge {
             background: #ffd700;
             color: #1a1a2e;
@@ -106,14 +110,22 @@
     <div class="container">
         <h1>✂️ BarberShop Admin</h1>
         
-        <div class="tabs">
-            <div class="tab active" data-admin-tab="today">📅 Сегодня</div>
-            <div class="tab" data-admin-tab="week">📆 Неделя</div>
-            <div class="tab" data-admin-tab="stats">📊 Статистика</div>
+        <div id="login-section">
+            <div class="info-text">Введите пароль для входа</div>
+            <input type="password" id="password-input" class="admin-password" placeholder="Пароль">
+            <button id="login-btn">Войти</button>
+            <div id="login-error" class="error hidden"></div>
         </div>
         
-        <div id="admin-content">
-            <div class="loading">Загрузка...</div>
+        <div id="admin-section" class="hidden">
+            <div class="tabs">
+                <div class="tab active" data-tab="all">📋 Все записи</div>
+                <div class="tab" data-tab="today">📅 Сегодня</div>
+                <div class="tab" data-tab="stats">📊 Статистика</div>
+            </div>
+            <div id="content">
+                <div class="loading">Загрузка...</div>
+            </div>
         </div>
     </div>
 
@@ -124,6 +136,7 @@
         tg.ready();
         
         const API_URL = "https://functions.yandexcloud.net/d4eho1fu83ho2dusd781";
+        const ADMIN_PASSWORD = "admin123";
         
         let allBookings = [];
         
@@ -136,13 +149,52 @@
             });
             const data = await response.json();
             allBookings = data.bookings || [];
-            console.log('Loaded bookings:', allBookings.length);
+            console.log('Загружено записей:', allBookings.length);
             return allBookings;
         }
         
-        // Записи на сегодня
-        async function loadToday() {
-            const container = document.getElementById('admin-content');
+        // Показать все записи
+        async function showAllBookings() {
+            const container = document.getElementById('content');
+            container.innerHTML = '<div class="loading">Загрузка...</div>';
+            await loadAllBookings();
+            
+            if (allBookings.length === 0) {
+                container.innerHTML = '<div class="info-text">Нет записей</div>';
+                return;
+            }
+            
+            // Группируем по дате
+            const grouped = {};
+            allBookings.forEach(b => {
+                if (!grouped[b.date]) grouped[b.date] = [];
+                grouped[b.date].push(b);
+            });
+            
+            let html = '';
+            for (const [date, bookings] of Object.entries(grouped).sort().reverse()) {
+                html += `<div class="date-badge">📆 ${date}</div>`;
+                for (const b of bookings) {
+                    html += `
+                        <div class="booking-item" data-id="${b.booking_id}">
+                            <div class="booking-time">${b.time}</div>
+                            <div><strong>${b.client_name}</strong> — ${b.service}</div>
+                            <div>👨‍🦰 Мастер: ${b.master}</div>
+                            <div>💰 ${b.price}₽</div>
+                            <div>📞 ${b.client_phone || 'не указан'}</div>
+                            <div>💬 ${b.comment || 'без комментария'}</div>
+                            <button class="booking-cancel" data-id="${b.booking_id}">❌ Отменить</button>
+                        </div>
+                    `;
+                }
+            }
+            container.innerHTML = html;
+            attachCancelEvents();
+        }
+        
+        // Показать записи на сегодня
+        async function showTodayBookings() {
+            const container = document.getElementById('content');
             container.innerHTML = '<div class="loading">Загрузка...</div>';
             await loadAllBookings();
             
@@ -154,48 +206,25 @@
                 return;
             }
             
-            renderBookings(container, todayBookings);
-        }
-        
-        // Записи на неделю
-        async function loadWeek() {
-            const container = document.getElementById('admin-content');
-            container.innerHTML = '<div class="loading">Загрузка...</div>';
-            await loadAllBookings();
-            
-            const today = new Date();
-            const weekLater = new Date(today);
-            weekLater.setDate(today.getDate() + 7);
-            
-            const weekBookings = allBookings.filter(b => {
-                const bookingDate = new Date(b.date);
-                return bookingDate >= today && bookingDate <= weekLater && b.status !== 'cancelled';
-            });
-            
-            if (weekBookings.length === 0) {
-                container.innerHTML = '<div class="info-text">Нет записей на эту неделю</div>';
-                return;
-            }
-            
-            // Группируем по дате
-            const grouped = {};
-            weekBookings.forEach(b => {
-                if (!grouped[b.date]) grouped[b.date] = [];
-                grouped[b.date].push(b);
-            });
-            
             let html = '';
-            for (const [date, bookings] of Object.entries(grouped).sort()) {
-                html += `<div class="date-badge">📆 ${date}</div>`;
-                html += renderBookingsList(bookings);
+            for (const b of todayBookings) {
+                html += `
+                    <div class="booking-item" data-id="${b.booking_id}">
+                        <div class="booking-time">${b.time}</div>
+                        <div><strong>${b.client_name}</strong> — ${b.service}</div>
+                        <div>👨‍🦰 Мастер: ${b.master}</div>
+                        <div>📞 ${b.client_phone || 'не указан'}</div>
+                        <button class="booking-cancel" data-id="${b.booking_id}">❌ Отменить</button>
+                    </div>
+                `;
             }
             container.innerHTML = html;
             attachCancelEvents();
         }
         
-        // Статистика
-        async function loadStats() {
-            const container = document.getElementById('admin-content');
+        // Показать статистику
+        async function showStats() {
+            const container = document.getElementById('content');
             container.innerHTML = '<div class="loading">Загрузка...</div>';
             await loadAllBookings();
             
@@ -219,28 +248,6 @@
             `;
         }
         
-        function renderBookings(container, bookings) {
-            container.innerHTML = renderBookingsList(bookings);
-            attachCancelEvents();
-        }
-        
-        function renderBookingsList(bookings) {
-            let html = '';
-            for (const b of bookings) {
-                html += `
-                    <div class="booking-item" data-id="${b.booking_id}">
-                        <div class="booking-time">${b.time}</div>
-                        <div><strong>${b.client_name}</strong> — ${b.service}</div>
-                        <div>👨‍🦰 Мастер: ${b.master}</div>
-                        <div>📞 ${b.client_phone || 'не указан'}</div>
-                        <div>💬 ${b.comment || 'без комментария'}</div>
-                        <button class="booking-cancel" data-id="${b.booking_id}">❌ Отменить</button>
-                    </div>
-                `;
-            }
-            return html;
-        }
-        
         function attachCancelEvents() {
             document.querySelectorAll('.booking-cancel').forEach(btn => {
                 btn.onclick = async () => {
@@ -254,11 +261,11 @@
                         const result = await response.json();
                         if (result.success) {
                             alert('Запись отменена');
-                            // Перезагружаем текущую вкладку
-                            const activeTab = document.querySelector('[data-admin-tab].active').dataset.adminTab;
-                            if (activeTab === 'today') loadToday();
-                            else if (activeTab === 'week') loadWeek();
-                            else loadStats();
+                            // Перезагружаем текущий вид
+                            const activeTab = document.querySelector('[data-tab].active').dataset.tab;
+                            if (activeTab === 'all') showAllBookings();
+                            else if (activeTab === 'today') showTodayBookings();
+                            else showStats();
                         } else {
                             alert('Ошибка отмены');
                         }
@@ -267,20 +274,30 @@
             });
         }
         
+        // Логин
+        document.getElementById('login-btn').onclick = () => {
+            const password = document.getElementById('password-input').value;
+            if (password === ADMIN_PASSWORD) {
+                document.getElementById('login-section').classList.add('hidden');
+                document.getElementById('admin-section').classList.remove('hidden');
+                showAllBookings();
+            } else {
+                document.getElementById('login-error').innerText = 'Неверный пароль';
+                document.getElementById('login-error').classList.remove('hidden');
+            }
+        };
+        
         // Переключение вкладок
-        document.querySelectorAll('[data-admin-tab]').forEach(tab => {
+        document.querySelectorAll('[data-tab]').forEach(tab => {
             tab.addEventListener('click', () => {
-                document.querySelectorAll('[data-admin-tab]').forEach(t => t.classList.remove('active'));
+                document.querySelectorAll('[data-tab]').forEach(t => t.classList.remove('active'));
                 tab.classList.add('active');
-                const tabName = tab.dataset.adminTab;
-                if (tabName === 'today') loadToday();
-                else if (tabName === 'week') loadWeek();
-                else if (tabName === 'stats') loadStats();
+                const tabName = tab.dataset.tab;
+                if (tabName === 'all') showAllBookings();
+                else if (tabName === 'today') showTodayBookings();
+                else if (tabName === 'stats') showStats();
             });
         });
-        
-        // Загружаем сегодняшние записи при старте
-        loadToday();
     </script>
 </body>
 </html>
