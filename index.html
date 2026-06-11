@@ -338,7 +338,8 @@
                             headers: { 'Content-Type': 'application/json' },
                             body: JSON.stringify({
                                 chat_id: tg.initDataUnsafe?.user?.id,
-                                text: `✅ *Запись подтверждена!*\n\n✂️ ${booking.service}\n👨‍🦰 Мастер: ${booking.master}\n📅 ${booking.date} в ${booking.time}\n💰 ${booking.price} ₽\n\nЖдём вас в барбершопе!`
+                                text: `✅ *Запись подтверждена!*\n\n✂️ ${booking.service}\n👨‍🦰 Мастер: ${booking.master}\n📅 ${booking.date} в ${booking.time}\n💰 ${booking.price} ₽\n\nЖдём вас в барбершопе!`,
+                                parse_mode: 'Markdown'
                             })
                         });
                     } catch (e) {
