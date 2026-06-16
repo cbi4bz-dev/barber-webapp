@@ -3,505 +3,645 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-    <title>Админ FakelCut</title>
+    <title>BarberShop — администрирование</title>
     <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-            background: #1a1a2e;
-            color: #eee;
-            padding: 20px;
-            min-height: 100vh;
+        /* ----- ТЕМЫ (светлая/тёмная) ----- */
+        :root {
+            --bg-primary: #ffffff;
+            --bg-secondary: #f5f5f7;
+            --surface: #ffffff;
+            --surface-elevated: #fafafc;
+            --border: #e0e0e4;
+            --text-primary: #1c1c1e;
+            --text-secondary: #6c6c70;
+            --accent: #1a1a1a;
+            --accent-hover: #2c2c2e;
+            --gold: #b48c48;
+            --gold-light: #d4af6a;
+            --shadow: 0 4px 12px rgba(0, 0, 0, 0.04);
+            --radius: 8px;
         }
-        .container { max-width: 700px; margin: 0 auto; }
-        h1 { font-size: 28px; margin-bottom: 8px; color: #ffd700; }
+
+        body.dark {
+            --bg-primary: #0b0b0f;
+            --bg-secondary: #13131a;
+            --surface: #18181f;
+            --surface-elevated: #1f1f28;
+            --border: #2c2c35;
+            --text-primary: #efeff1;
+            --text-secondary: #a0a0b0;
+            --accent: #ffffff;
+            --accent-hover: #e6e6e6;
+            --gold: #d4af6a;
+            --gold-light: #e6c88a;
+            --shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            transition: background 0.2s, color 0.2s;
+            padding-bottom: 60px;
+        }
+
+        .container {
+            max-width: 720px;
+            margin: 0 auto;
+            padding: 24px 20px;
+        }
+
+        h1 {
+            font-size: 28px;
+            font-weight: 500;
+            letter-spacing: -0.3px;
+            color: var(--text-primary);
+        }
+
+        .headline {
+            font-size: 15px;
+            color: var(--text-secondary);
+            margin-top: 4px;
+            border-left: 3px solid var(--gold);
+            padding-left: 12px;
+        }
+
+        .theme-switch {
+            display: flex;
+            justify-content: flex-end;
+            margin-bottom: 20px;
+        }
+        .theme-btn {
+            background: transparent;
+            border: 1px solid var(--border);
+            padding: 6px 12px;
+            border-radius: var(--radius);
+            cursor: pointer;
+            font-size: 14px;
+            color: var(--text-primary);
+        }
+
+        .card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 24px;
+            margin-bottom: 20px;
+            box-shadow: var(--shadow);
+        }
+
+        .card-title {
+            font-size: 18px;
+            font-weight: 500;
+            margin-bottom: 20px;
+            color: var(--text-primary);
+            letter-spacing: -0.2px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
         .tabs {
             display: flex;
-            gap: 10px;
-            margin-bottom: 20px;
             flex-wrap: wrap;
+            gap: 8px;
+            margin-bottom: 20px;
         }
         .tab {
-            padding: 10px 20px;
-            background: #16213e;
-            border-radius: 30px;
+            background: transparent;
+            border: 1px solid var(--border);
+            color: var(--text-secondary);
+            padding: 8px 18px;
+            border-radius: var(--radius);
             cursor: pointer;
+            font-weight: 500;
+            transition: 0.1s;
         }
         .tab.active {
-            background: #ffd700;
-            color: #1a1a2e;
-            font-weight: bold;
+            background: var(--gold);
+            border-color: var(--gold);
+            color: #1c1c1e;
         }
-        .card {
-            background: #16213e;
-            border-radius: 20px;
-            padding: 20px;
-            margin-bottom: 20px;
-        }
-        .card-title { font-size: 18px; font-weight: 600; margin-bottom: 15px; color: #ffd700; }
-        select, input {
-            width: 100%;
-            padding: 14px;
-            margin-bottom: 15px;
-            background: #0f3460;
-            border: none;
-            border-radius: 12px;
-            color: white;
-            font-size: 16px;
-        }
-        button {
-            width: 100%;
-            padding: 14px;
-            background: #ffd700;
-            color: #1a1a2e;
-            border: none;
-            border-radius: 12px;
-            font-weight: bold;
-            cursor: pointer;
-        }
-        button.danger { background: #e74c3c; color: white; }
-        button.secondary { background: #3498db; color: white; }
+
         .booking-item {
-            background: #0f3460;
-            border-radius: 12px;
-            padding: 12px;
-            margin-bottom: 10px;
+            background: var(--surface-elevated);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 16px;
+            margin-bottom: 12px;
         }
-        .booking-time { font-size: 16px; font-weight: bold; color: #ffd700; }
+
+        .booking-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+        .booking-time {
+            font-weight: 500;
+            color: var(--gold);
+        }
+
         .booking-cancel {
-            background: #e74c3c;
-            border: none;
-            padding: 8px 16px;
-            border-radius: 20px;
-            color: white;
-            margin-top: 8px;
+            background: transparent;
+            border: 1px solid #b00020;
+            color: #b00020;
+            padding: 4px 12px;
+            border-radius: var(--radius);
             cursor: pointer;
         }
+        body.dark .booking-cancel {
+            border-color: #ff6b6b;
+            color: #ff6b6b;
+        }
+
+        .client-item {
+            background: var(--surface-elevated);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 16px;
+            margin-bottom: 10px;
+            cursor: pointer;
+        }
+        .client-item:hover {
+            border-color: var(--gold);
+        }
+
         .stats-grid {
             display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 15px;
-            margin-top: 15px;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 16px;
         }
         .stat-card {
-            background: #0f3460;
-            padding: 15px;
-            border-radius: 12px;
+            background: var(--surface-elevated);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 20px;
             text-align: center;
         }
         .stat-number {
-            font-size: 28px;
-            font-weight: bold;
-            color: #ffd700;
+            font-size: 32px;
+            font-weight: 500;
+            color: var(--gold);
         }
-        .time-slots { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 10px; }
+        .stat-label {
+            font-size: 14px;
+            color: var(--text-secondary);
+            margin-top: 4px;
+        }
+
+        .time-slots {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin: 12px 0;
+        }
         .time-slot {
-            background: #0f3460;
-            padding: 10px 16px;
-            border-radius: 25px;
+            background: var(--surface-elevated);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 8px 16px;
             cursor: pointer;
+            font-weight: 500;
         }
-        .time-slot.closed { background: #e74c3c; opacity: 0.7; text-decoration: line-through; }
-        .date-badge {
-            background: #ffd700;
-            color: #1a1a2e;
-            padding: 5px 10px;
-            border-radius: 20px;
-            font-size: 12px;
-            display: inline-block;
-            margin-bottom: 10px;
-        }
-        .login-form { text-align: center; }
-        .hidden { display: none; }
-        .info-text { text-align: center; padding: 20px; color: #888; }
-        .error { color: #e74c3c; text-align: center; margin-top: 10px; }
-        .success { color: #2ecc71; text-align: center; margin-top: 10px; }
-        .loading { text-align: center; padding: 20px; color: #ffd700; }
-        .client-item {
-            background: #0f3460;
-            border-radius: 12px;
-            padding: 12px;
-            margin-bottom: 10px;
-            cursor: pointer;
-            transition: transform 0.1s;
-        }
-        .client-item:hover {
-            transform: scale(1.01);
-            background: #1a4a7a;
-        }
-        .back-btn {
-            background: #3498db;
+        .time-slot.closed {
+            background: #b00020;
             color: white;
-            margin-bottom: 15px;
+            border-color: #b00020;
+            text-decoration: line-through;
+        }
+        body.dark .time-slot.closed {
+            background: #661a1a;
+            border-color: #661a1a;
+        }
+
+        .input-field {
+            width: 100%;
+            padding: 12px 16px;
+            background: var(--surface-elevated);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            color: var(--text-primary);
+            font-size: 15px;
+            margin-bottom: 16px;
+        }
+        select.input-field {
+            appearance: auto;
+        }
+
+        .btn {
+            padding: 12px 20px;
+            background: var(--accent);
+            color: #fff;
+            border: none;
+            border-radius: var(--radius);
+            font-weight: 500;
+            font-size: 15px;
+            cursor: pointer;
+            transition: 0.2s;
+            width: 100%;
+        }
+        .btn:hover { background: var(--accent-hover); }
+        .btn-secondary {
+            background: transparent;
+            border: 1px solid var(--border);
+            color: var(--text-primary);
+        }
+        .btn-secondary:hover {
+            background: var(--surface-elevated);
+        }
+
+        .hidden { display: none; }
+        .text-muted { color: var(--text-secondary); font-size: 14px; }
+        .flex-between { display: flex; justify-content: space-between; align-items: center; }
+        .mt-16 { margin-top: 16px; }
+        .mb-16 { margin-bottom: 16px; }
+        .gap-8 { gap: 8px; }
+
+        .back-btn {
+            background: transparent;
+            border: 1px solid var(--border);
+            padding: 6px 14px;
+            border-radius: var(--radius);
+            cursor: pointer;
+            color: var(--text-primary);
+            margin-bottom: 16px;
+        }
+
+        /* login */
+        .login-box {
+            max-width: 360px;
+            margin: 0 auto;
+            text-align: center;
+        }
+        .login-box .input-field {
+            margin-bottom: 16px;
+        }
+
+        /* мобильная адаптация */
+        @media (max-width: 480px) {
+            .stats-grid { grid-template-columns: 1fr 1fr; }
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <h1>✂️ BarberShop Admin</h1>
-        
-        <div id="login-section">
-            <div class="card">
-                <div class="card-title">🔐 Вход</div>
-                <input type="password" id="admin-password" placeholder="Пароль">
-                <button id="login-btn">Войти</button>
-                <div id="login-error" class="error hidden"></div>
-            </div>
-        </div>
-        
-        <div id="admin-section" class="hidden">
-            <div class="tabs">
-                <div class="tab" data-tab="all">📋 Все записи</div>
-                <div class="tab" data-tab="today">📅 Сегодня</div>
-                <div class="tab" data-tab="clients">👥 Клиенты</div>
-                <div class="tab" data-tab="slots">⏰ Слоты</div>
-                <div class="tab" data-tab="stats">📊 Статистика</div>
-            </div>
-            <div id="content">
-                <div class="loading">Загрузка...</div>
-            </div>
-        </div>
+<div class="container">
+    <div class="theme-switch">
+        <button id="themeToggleBtn" class="theme-btn">🌙 Тёмная тема</button>
     </div>
 
-    <script>
-        const API_URL = "https://functions.yandexcloud.net/d4eho1fu83ho2dusd781";
-        const ADMIN_PASSWORD = "admin123";
-        
-        const masters = [
-            { name: "Алексей" },
-            { name: "Дмитрий" },
-            { name: "Максим" }
-        ];
-        
-        let allBookings = [];
-        
-        document.getElementById('login-btn').onclick = () => {
-            const password = document.getElementById('admin-password').value;
-            if (password === ADMIN_PASSWORD) {
-                document.getElementById('login-section').classList.add('hidden');
-                document.getElementById('admin-section').classList.remove('hidden');
-                document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-                document.querySelector('[data-tab="all"]').classList.add('active');
-                showAllBookings();
-            } else {
-                document.getElementById('login-error').innerText = 'Неверный пароль';
-                document.getElementById('login-error').classList.remove('hidden');
-            }
-        };
-        
-        document.querySelectorAll('[data-tab]').forEach(tab => {
-            tab.addEventListener('click', () => {
-                document.querySelectorAll('[data-tab]').forEach(t => t.classList.remove('active'));
-                tab.classList.add('active');
-                const tabName = tab.dataset.tab;
-                if (tabName === 'all') showAllBookings();
-                else if (tabName === 'today') showTodayBookings();
-                else if (tabName === 'clients') showClients();
-                else if (tabName === 'slots') showSlotsManager();
-                else if (tabName === 'stats') showStats();
-            });
+    <h1>✂️ BarberShop</h1>
+    <div class="headline">Администрирование</div>
+
+    <!-- ЛОГИН -->
+    <div id="loginSection" class="card login-box">
+        <div class="card-title">🔐 Вход</div>
+        <input type="password" id="adminPassword" class="input-field" placeholder="Пароль">
+        <button id="loginBtn" class="btn">Войти</button>
+        <div id="loginError" class="text-muted" style="color:#b00020; margin-top:12px; display:none;">Неверный пароль</div>
+    </div>
+
+    <!-- АДМИН-ПАНЕЛЬ -->
+    <div id="adminSection" class="hidden">
+        <div class="tabs" id="tabContainer">
+            <div class="tab active" data-tab="all">📋 Все записи</div>
+            <div class="tab" data-tab="today">📅 Сегодня</div>
+            <div class="tab" data-tab="clients">👥 Клиенты</div>
+            <div class="tab" data-tab="slots">⏰ Слоты</div>
+            <div class="tab" data-tab="stats">📊 Статистика</div>
+        </div>
+
+        <div id="contentArea">
+            <div class="text-muted" style="text-align:center; padding:40px 0;">Загрузка...</div>
+        </div>
+    </div>
+</div>
+
+<script src="https://telegram.org/js/telegram-web-app.js"></script>
+<script>
+    // ---------- ИНИЦИАЛИЗАЦИЯ ----------
+    const API_URL = "https://functions.yandexcloud.net/d4eho1fu83ho2dusd781";
+    const ADMIN_PASSWORD = "admin123";
+
+    // ТЕМА
+    let isDark = localStorage.getItem('theme') === 'dark';
+    function applyTheme() {
+        if (isDark) document.body.classList.add('dark');
+        else document.body.classList.remove('dark');
+        document.getElementById('themeToggleBtn').innerText = isDark ? '☀️ Светлая тема' : '🌙 Тёмная тема';
+    }
+    document.getElementById('themeToggleBtn').onclick = () => {
+        isDark = !isDark;
+        localStorage.setItem('theme', isDark ? 'dark' : 'light');
+        applyTheme();
+    };
+    applyTheme();
+
+    // LOGIN
+    const loginSection = document.getElementById('loginSection');
+    const adminSection = document.getElementById('adminSection');
+    const loginBtn = document.getElementById('loginBtn');
+    const adminPassword = document.getElementById('adminPassword');
+    const loginError = document.getElementById('loginError');
+
+    loginBtn.onclick = () => {
+        if (adminPassword.value === ADMIN_PASSWORD) {
+            loginSection.classList.add('hidden');
+            adminSection.classList.remove('hidden');
+            loginError.style.display = 'none';
+            loadTab('all');
+        } else {
+            loginError.style.display = 'block';
+        }
+    };
+
+    // ПЕРЕКЛЮЧЕНИЕ ВКЛАДОК
+    document.querySelectorAll('.tab').forEach(tab => {
+        tab.addEventListener('click', () => {
+            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+            tab.classList.add('active');
+            loadTab(tab.dataset.tab);
         });
-        
-        async function loadAllBookings() {
-            const response = await fetch(API_URL, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ action: 'getAllBookings' })
-            });
-            const data = await response.json();
-            allBookings = data.bookings || [];
-            return allBookings;
+    });
+
+    // ---------- API ----------
+    async function callAPI(action, payload = {}) {
+        const res = await fetch(API_URL, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ action, ...payload })
+        });
+        return await res.json();
+    }
+
+    // ---------- ЗАГРУЗКА ВКЛАДОК ----------
+    async function loadTab(tab) {
+        const area = document.getElementById('contentArea');
+        if (tab === 'all') await showAllBookings(area);
+        else if (tab === 'today') await showTodayBookings(area);
+        else if (tab === 'clients') await showClients(area);
+        else if (tab === 'slots') await showSlotsManager(area);
+        else if (tab === 'stats') await showStats(area);
+    }
+
+    // ----- ВСЕ ЗАПИСИ -----
+    async function showAllBookings(area) {
+        area.innerHTML = '<div class="text-muted">Загрузка...</div>';
+        const data = await callAPI('getAllBookings');
+        const bookings = data.bookings || [];
+        if (!bookings.length) {
+            area.innerHTML = '<div class="text-muted" style="text-align:center; padding:40px 0;">Нет записей</div>';
+            return;
         }
-        
-        async function showAllBookings() {
-            const container = document.getElementById('content');
-            container.innerHTML = '<div class="loading">Загрузка...</div>';
-            await loadAllBookings();
-            
-            if (allBookings.length === 0) {
-                container.innerHTML = '<div class="info-text">Нет записей</div>';
-                return;
-            }
-            
-            const grouped = {};
-            allBookings.forEach(b => {
-                if (!grouped[b.date]) grouped[b.date] = [];
-                grouped[b.date].push(b);
-            });
-            
-            let html = '';
-            for (const [date, bookings] of Object.entries(grouped).sort().reverse()) {
-                html += `<div class="date-badge">📆 ${date}</div>`;
-                for (const b of bookings) {
-                    html += `
-                        <div class="booking-item" data-id="${b.booking_id}">
-                            <div class="booking-time">${b.time}</div>
-                            <div><strong>${b.client_name}</strong> — ${b.service}</div>
-                            <div>👨‍🦰 ${b.master}</div>
-                            <div>💰 ${b.price}₽</div>
-                            <div>📞 ${b.client_phone || 'не указан'}</div>
-                            <button class="booking-cancel" data-id="${b.booking_id}">❌ Отменить</button>
-                        </div>
-                    `;
-                }
-            }
-            container.innerHTML = html;
-            attachCancelEvents();
-        }
-        
-        async function showTodayBookings() {
-            const container = document.getElementById('content');
-            container.innerHTML = '<div class="loading">Загрузка...</div>';
-            await loadAllBookings();
-            
-            const today = new Date().toISOString().split('T')[0];
-            const todayBookings = allBookings.filter(b => b.date === today && b.status !== 'cancelled');
-            
-            if (todayBookings.length === 0) {
-                container.innerHTML = '<div class="info-text">Нет записей на сегодня</div>';
-                return;
-            }
-            
-            let html = '';
-            for (const b of todayBookings) {
+        const grouped = {};
+        bookings.forEach(b => {
+            if (!grouped[b.date]) grouped[b.date] = [];
+            grouped[b.date].push(b);
+        });
+        let html = '';
+        Object.keys(grouped).sort().reverse().forEach(date => {
+            html += `<div class="text-muted" style="margin: 12px 0 8px; font-weight:500;">${date}</div>`;
+            grouped[date].forEach(b => {
                 html += `
-                    <div class="booking-item" data-id="${b.booking_id}">
-                        <div class="booking-time">${b.time}</div>
+                    <div class="booking-item">
+                        <div class="booking-header">
+                            <span class="booking-time">${b.time}</span>
+                            <button class="booking-cancel" data-id="${b.booking_id}">Отменить</button>
+                        </div>
                         <div><strong>${b.client_name}</strong> — ${b.service}</div>
                         <div>👨‍🦰 ${b.master}</div>
-                        <div>📞 ${b.client_phone || 'не указан'}</div>
-                        <button class="booking-cancel" data-id="${b.booking_id}">❌ Отменить</button>
+                        <div>${b.price} ₽</div>
                     </div>
                 `;
-            }
-            container.innerHTML = html;
-            attachCancelEvents();
+            });
+        });
+        area.innerHTML = html;
+        attachCancelEvents(area);
+    }
+
+    // ----- СЕГОДНЯ -----
+    async function showTodayBookings(area) {
+        area.innerHTML = '<div class="text-muted">Загрузка...</div>';
+        const today = new Date().toISOString().split('T')[0];
+        const data = await callAPI('getBookingsByDate', { date: today });
+        const bookings = data.bookings || [];
+        if (!bookings.length) {
+            area.innerHTML = '<div class="text-muted" style="text-align:center; padding:40px 0;">Нет записей на сегодня</div>';
+            return;
         }
-        
-        function attachCancelEvents() {
-            document.querySelectorAll('.booking-cancel').forEach(btn => {
-                btn.onclick = async () => {
-                    const bookingId = btn.dataset.id;
-                    if (confirm('Отменить запись?')) {
-                        const response = await fetch(API_URL, {
-                            method: 'POST',
-                            headers: { 'Content-Type': 'application/json' },
-                            body: JSON.stringify({ action: 'cancelBooking', bookingId: bookingId })
-                        });
-                        const result = await response.json();
-                        if (result.success) {
-                            alert('Запись отменена');
-                            const activeTab = document.querySelector('[data-tab].active').dataset.tab;
-                            if (activeTab === 'all') showAllBookings();
-                            else showTodayBookings();
-                        } else {
-                            alert('Ошибка отмены');
-                        }
+        let html = '';
+        bookings.forEach(b => {
+            html += `
+                <div class="booking-item">
+                    <div class="booking-header">
+                        <span class="booking-time">${b.time}</span>
+                        <button class="booking-cancel" data-id="${b.booking_id}">Отменить</button>
+                    </div>
+                    <div><strong>${b.client_name}</strong> — ${b.service}</div>
+                    <div>👨‍🦰 ${b.master}</div>
+                    <div>${b.price} ₽</div>
+                </div>
+            `;
+        });
+        area.innerHTML = html;
+        attachCancelEvents(area);
+    }
+
+    // ----- КЛИЕНТЫ -----
+    async function showClients(area) {
+        area.innerHTML = '<div class="text-muted">Загрузка...</div>';
+        const data = await callAPI('getAllClients');
+        const clients = data.clients || [];
+        if (!clients.length) {
+            area.innerHTML = '<div class="text-muted" style="text-align:center; padding:40px 0;">Нет клиентов</div>';
+            return;
+        }
+        let html = '';
+        clients.forEach(c => {
+            html += `
+                <div class="client-item" data-id="${c.client_id}">
+                    <div><strong>${c.name || 'Гость'}</strong> ${c.username ? '@'+c.username : ''}</div>
+                    <div class="flex-between">
+                        <span>📞 ${c.phone || '—'}</span>
+                        <span>✂️ ${c.total_visits || 0} визитов</span>
+                        <span>${c.total_spent || 0} ₽</span>
+                    </div>
+                    <div class="text-muted">Последний: ${c.last_visit ? c.last_visit.split('T')[0] : '—'}</div>
+                </div>
+            `;
+        });
+        area.innerHTML = html;
+        // клик по клиенту — детальная карточка
+        document.querySelectorAll('.client-item').forEach(el => {
+            el.addEventListener('click', async () => {
+                const clientId = el.dataset.id;
+                await showClientDetail(area, clientId);
+            });
+        });
+    }
+
+    async function showClientDetail(area, clientId) {
+        const clientData = await callAPI('getClient', { clientId });
+        const client = clientData.client;
+        if (!client) {
+            area.innerHTML = '<div class="text-muted">Клиент не найден</div>';
+            return;
+        }
+        const all = await callAPI('getAllBookings');
+        const clientBookings = (all.bookings || []).filter(b => b.client_id == clientId && b.status !== 'cancelled');
+        let html = `<button class="back-btn" onclick="loadTab('clients')">← Назад</button>
+            <div class="card">
+                <div class="card-title">👤 ${client.name || 'Гость'}</div>
+                <div><span class="text-muted">Telegram:</span> ${client.username ? '@'+client.username : '—'}</div>
+                <div><span class="text-muted">Телефон:</span> ${client.phone || '—'}</div>
+                <div><span class="text-muted">Всего визитов:</span> ${client.total_visits || 0}</div>
+                <div><span class="text-muted">Потрачено:</span> ${client.total_spent || 0} ₽</div>
+                <div><span class="text-muted">Любимый мастер:</span> ${client.preferred_master || '—'}</div>
+            </div>
+            <div class="card">
+                <div class="card-title">📋 История записей</div>`;
+        if (!clientBookings.length) {
+            html += `<div class="text-muted">Нет записей</div>`;
+        } else {
+            clientBookings.forEach(b => {
+                html += `<div class="booking-item"><span class="booking-time">${b.date} ${b.time}</span> — ${b.service}, ${b.price} ₽</div>`;
+            });
+        }
+        html += `</div>`;
+        area.innerHTML = html;
+    }
+
+    // ----- УПРАВЛЕНИЕ СЛОТАМИ -----
+    async function showSlotsManager(area) {
+        const masters = ['Алексей', 'Дмитрий', 'Михаил'];
+        const today = new Date().toISOString().split('T')[0];
+        area.innerHTML = `
+            <div class="card">
+                <div class="card-title">👨‍🦰 Мастер</div>
+                <select id="slotMaster" class="input-field">${masters.map(m => `<option value="${m}">${m}</option>`).join('')}</select>
+            </div>
+            <div class="card">
+                <div class="card-title">📅 Дата</div>
+                <input type="date" id="slotDate" class="input-field" value="${today}">
+            </div>
+            <button id="loadSlotsBtn" class="btn btn-secondary">Загрузить слоты</button>
+            <div id="slotsEditor" class="hidden">
+                <div class="card">
+                    <div class="card-title">⏰ Нажмите на слот, чтобы закрыть/открыть</div>
+                    <div id="slotsList" class="time-slots"></div>
+                </div>
+                <button id="saveSlotsBtn" class="btn">💾 Сохранить</button>
+            </div>
+            <div id="slotsMessage" class="text-muted mt-16"></div>
+        `;
+
+        document.getElementById('loadSlotsBtn').onclick = async () => {
+            const master = document.getElementById('slotMaster').value;
+            const date = document.getElementById('slotDate').value;
+            const data = await callAPI('getClosedSlots', { date, master });
+            const closed = data.slots || [];
+            const allSlots = ['10:00','11:00','12:00','13:00','14:00','15:00','16:00','17:00','18:00','19:00'];
+            const container = document.getElementById('slotsList');
+            container.innerHTML = '';
+            let currentClosed = [...closed];
+            allSlots.forEach(slot => {
+                const span = document.createElement('span');
+                span.className = `time-slot ${currentClosed.includes(slot) ? 'closed' : ''}`;
+                span.textContent = slot;
+                span.onclick = () => {
+                    if (currentClosed.includes(slot)) {
+                        currentClosed = currentClosed.filter(s => s !== slot);
+                        span.classList.remove('closed');
+                    } else {
+                        currentClosed.push(slot);
+                        span.classList.add('closed');
                     }
                 };
+                container.appendChild(span);
             });
-        }
-        
-        // ============ КЛИЕНТЫ ============
-        
-        async function showClients() {
-            const container = document.getElementById('content');
-            container.innerHTML = '<div class="loading">Загрузка...</div>';
-            
-            const response = await fetch(API_URL, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ action: 'getAllClients' })
+            document.getElementById('slotsEditor').classList.remove('hidden');
+            window._currentClosed = currentClosed;
+            window._currentMaster = master;
+            window._currentDate = date;
+        };
+
+        document.getElementById('saveSlotsBtn').onclick = async () => {
+            if (!window._currentClosed) return;
+            const result = await callAPI('saveClosedSlots', {
+                date: window._currentDate,
+                master: window._currentMaster,
+                slots: window._currentClosed
             });
-            const data = await response.json();
-            const clients = data.clients || [];
-            
-            if (clients.length === 0) {
-                container.innerHTML = '<div class="info-text">Нет клиентов</div>';
-                return;
-            }
-            
-            let html = '<div class="card"><div class="card-title">👥 Все клиенты</div>';
-            for (const c of clients) {
-                const lastVisit = c.last_visit ? c.last_visit.split('T')[0] : '-';
-                html += `
-                    <div class="client-item" onclick="showClientDetail('${c.client_id}')">
-                        <div><strong>${c.name || 'Гость'}</strong> ${c.username ? '@' + c.username : ''}</div>
-                        <div>📞 ${c.phone || 'не указан'}</div>
-                        <div>✂️ ${c.total_visits} визитов | 💰 ${c.total_spent}₽</div>
-                        <div>📅 Последний визит: ${lastVisit}</div>
-                        <div>⭐ Любимый мастер: ${c.preferred_master || '-'}</div>
-                    </div>
-                `;
-            }
-            html += '</div>';
-            container.innerHTML = html;
-        }
-        
-        async function showClientDetail(clientId) {
-            const container = document.getElementById('content');
-            container.innerHTML = '<div class="loading">Загрузка...</div>';
-            
-            const response = await fetch(API_URL, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ action: 'getClient', clientId: clientId })
-            });
-            const data = await response.json();
-            const client = data.client;
-            
-            if (!client) {
-                container.innerHTML = '<div class="info-text">Клиент не найден</div>';
-                return;
-            }
-            
-            await loadAllBookings();
-            const clientBookings = allBookings.filter(b => b.client_id == clientId && b.status !== 'cancelled');
-            
-            let bookingsHtml = '';
-            for (const b of clientBookings) {
-                bookingsHtml += `
-                    <div style="background:#0f3460; padding:10px; border-radius:10px; margin-bottom:8px;">
-                        <div>📅 ${b.date} в ${b.time} — ${b.service} (${b.price}₽)</div>
-                        <div>👨‍🦰 Мастер: ${b.master}</div>
-                    </div>
-                `;
-            }
-            
-            container.innerHTML = `
-                <button class="back-btn" onclick="showClients()">← Назад к списку</button>
-                <div class="card">
-                    <div class="card-title">👤 ${client.name || 'Гость'}</div>
-                    <div><strong>Telegram ID:</strong> ${client.client_id}</div>
-                    <div><strong>Username:</strong> ${client.username ? '@' + client.username : '-'}</div>
-                    <div><strong>Телефон:</strong> ${client.phone || 'не указан'}</div>
-                    <div><strong>Дата регистрации:</strong> ${client.registered_at ? client.registered_at.split('T')[0] : '-'}</div>
-                    <div><strong>Последний визит:</strong> ${client.last_visit ? client.last_visit.split('T')[0] + ' в ' + client.last_visit.split('T')[1]?.slice(0,5) : '-'}</div>
-                    <div><strong>Всего визитов:</strong> ${client.total_visits}</div>
-                    <div><strong>Общая сумма:</strong> ${client.total_spent}₽</div>
-                    <div><strong>Любимый мастер:</strong> ${client.preferred_master || '-'}</div>
-                    <div><strong>Любимая услуга:</strong> ${client.preferred_service || '-'}</div>
-                    <div><strong>Заметки:</strong> ${client.notes || '-'}</div>
-                </div>
-                <div class="card">
-                    <div class="card-title">📋 История записей</div>
-                    ${bookingsHtml || '<div class="info-text">Нет записей</div>'}
-                </div>
-            `;
-        }
-        
-        // ============ УПРАВЛЕНИЕ СЛОТАМИ ============
-        
-        async function showSlotsManager() {
-            const container = document.getElementById('content');
-            const mastersList = masters.map(m => `<option value="${m.name}">${m.name}</option>`).join('');
-            const today = new Date().toISOString().split('T')[0];
-            
-            container.innerHTML = `
-                <div class="card">
-                    <div class="card-title">👨‍🦰 Мастер</div>
-                    <select id="slots-master">${mastersList}</select>
-                </div>
-                <div class="card">
-                    <div class="card-title">📅 Дата</div>
-                    <input type="date" id="slots-date" value="${today}">
-                </div>
-                <button id="load-slots-btn" class="secondary">Загрузить слоты</button>
-                <div id="slots-editor" class="hidden">
-                    <div class="card">
-                        <div class="card-title">⏰ Нажми на слот, чтобы закрыть/открыть</div>
-                        <div id="closed-slots-list" class="time-slots"></div>
-                    </div>
-                    <button id="save-slots-btn">💾 Сохранить</button>
-                </div>
-                <div id="slots-message"></div>
-            `;
-            
-            document.getElementById('load-slots-btn').onclick = async () => {
-                const master = document.getElementById('slots-master').value;
-                const date = document.getElementById('slots-date').value;
-                
-                const response = await fetch(API_URL, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ action: 'getClosedSlots', date, master })
-                });
-                const data = await response.json();
-                let closedSlots = data.slots || [];
-                
-                const editor = document.getElementById('slots-editor');
-                editor.classList.remove('hidden');
-                
-                const slotsContainer = document.getElementById('closed-slots-list');
-                const allSlots = ['10:00', '11:00', '12:00', '13:00', '14:00', '15:00', '16:00', '17:00', '18:00', '19:00'];
-                
-                slotsContainer.innerHTML = '';
-                allSlots.forEach(slot => {
-                    const span = document.createElement('span');
-                    span.className = `time-slot ${closedSlots.includes(slot) ? 'closed' : ''}`;
-                    span.innerText = slot;
-                    span.onclick = () => {
-                        if (closedSlots.includes(slot)) {
-                            closedSlots = closedSlots.filter(s => s !== slot);
-                            span.classList.remove('closed');
-                        } else {
-                            closedSlots.push(slot);
-                            span.classList.add('closed');
-                        }
-                    };
-                    slotsContainer.appendChild(span);
-                });
-                
-                window.currentClosedSlots = closedSlots;
-                window.currentMaster = master;
-                window.currentDate = date;
+            const msg = document.getElementById('slotsMessage');
+            msg.textContent = result.success ? '✅ Слоты сохранены' : '❌ Ошибка сохранения';
+        };
+    }
+
+    // ----- СТАТИСТИКА -----
+    async function showStats(area) {
+        area.innerHTML = '<div class="text-muted">Загрузка...</div>';
+        const stats = await callAPI('getStats');
+        const total = stats.total || 0;
+        const revenue = stats.revenue || 0;
+        const clients = stats.totalClients || 0;
+        const top = stats.topService || {};
+        area.innerHTML = `
+            <div class="stats-grid">
+                <div class="stat-card"><div class="stat-number">${total}</div><div class="stat-label">Всего записей</div></div>
+                <div class="stat-card"><div class="stat-number">${revenue} ₽</div><div class="stat-label">Выручка</div></div>
+                <div class="stat-card"><div class="stat-number">${clients}</div><div class="stat-label">Клиентов</div></div>
+                <div class="stat-card"><div class="stat-number">${top.name || '—'}</div><div class="stat-label">Топ услуга</div></div>
+            </div>
+        `;
+    }
+
+    // ----- ОТМЕНА ЗАПИСИ -----
+    function attachCancelEvents(container) {
+        container.querySelectorAll('.booking-cancel').forEach(btn => {
+            btn.onclick = async () => {
+                if (!confirm('Отменить запись?')) return;
+                const id = btn.dataset.id;
+                await callAPI('cancelBooking', { bookingId: id });
+                // перезагрузить текущую вкладку
+                const activeTab = document.querySelector('.tab.active').dataset.tab;
+                loadTab(activeTab);
             };
-            
-            document.getElementById('save-slots-btn')?.addEventListener('click', async () => {
-                if (!window.currentClosedSlots) return;
-                const response = await fetch(API_URL, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ 
-                        action: 'saveClosedSlots', 
-                        date: window.currentDate, 
-                        master: window.currentMaster, 
-                        slots: window.currentClosedSlots 
-                    })
-                });
-                const result = await response.json();
-                const msgDiv = document.getElementById('slots-message');
-                if (result.success) {
-                    msgDiv.innerHTML = '<div class="success">✅ Слоты сохранены!</div>';
-                } else {
-                    msgDiv.innerHTML = '<div class="error">❌ Ошибка сохранения</div>';
-                }
-                setTimeout(() => msgDiv.innerHTML = '', 3000);
-            });
+        });
+    }
+
+    // Через Telegram WebApp
+    const tg = window.Telegram.WebApp;
+    if (tg) { tg.expand(); tg.ready(); }
+
+    // При загрузке проверить, не был ли уже админ залогинен (по localStorage)
+    if (localStorage.getItem('adminLogged') === 'true') {
+        loginSection.classList.add('hidden');
+        adminSection.classList.remove('hidden');
+        loadTab('all');
+    }
+
+    // запомнить вход
+    loginBtn.addEventListener('click', () => {
+        if (adminPassword.value === ADMIN_PASSWORD) {
+            localStorage.setItem('adminLogged', 'true');
         }
-        
-        // ============ СТАТИСТИКА ============
-        
-        async function showStats() {
-            const container = document.getElementById('content');
-            container.innerHTML = '<div class="loading">Загрузка...</div>';
-            
-            const response = await fetch(API_URL, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ action: 'getStats' })
-            });
-            const stats = await response.json();
-            
-            container.innerHTML = `
-                <div class="stats-grid">
-                    <div class="stat-card"><div class="stat-number">${stats.total || 0}</div><div class="stat-label">Всего записей</div></div>
-                    <div class="stat-card"><div class="stat-number">${stats.revenue || 0}₽</div><div class="stat-label">Выручка</div></div>
-                    <div class="stat-card"><div class="stat-number">${stats.totalClients || 0}</div><div class="stat-label">Клиентов</div></div>
-                    <div class="stat-card"><div class="stat-number">${stats.topService ? stats.topService.name : '-'}</div><div class="stat-label">Самая популярная</div></div>
-                </div>
-            `;
-        }
-    </script>
+    });
+
+    // кнопка "выйти" (добавим в интерфейс)
+    const logoutBtn = document.createElement('button');
+    logoutBtn.className = 'btn btn-secondary mt-16';
+    logoutBtn.textContent = '🚪 Выйти из админки';
+    logoutBtn.onclick = () => {
+        localStorage.removeItem('adminLogged');
+        location.reload();
+    };
+    document.getElementById('adminSection').appendChild(logoutBtn);
+</script>
 </body>
 </html>
