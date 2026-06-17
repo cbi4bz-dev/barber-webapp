@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
     <title>BarberShop | премиальная запись</title>
     <style>
-        /* ----- CSS-переменные для светлой и тёмной темы ----- */
+        /* ----- ТЕМЫ ----- */
         :root {
             --bg-primary: #ffffff;
             --bg-secondary: #f5f5f7;
@@ -19,7 +19,7 @@
             --gold: #b48c48;
             --gold-light: #d4af6a;
             --shadow: 0 4px 12px rgba(0, 0, 0, 0.04);
-            --radius: 8px;      /* минимальное скругление */
+            --radius: 8px;
         }
 
         body.dark {
@@ -37,43 +37,21 @@
             --shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
         }
 
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
+        * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
             background: var(--bg-primary);
             color: var(--text-primary);
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, sans-serif;
-            font-feature-settings: 'calt' off;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
             transition: background 0.2s, color 0.2s;
             padding-bottom: 84px;
         }
 
-        .container {
-            max-width: 640px;
-            margin: 0 auto;
-            padding: 24px 20px;
-        }
+        .container { max-width: 640px; margin: 0 auto; padding: 24px 20px; }
+        h1 { font-size: 28px; font-weight: 500; letter-spacing: -0.3px; color: var(--text-primary); }
+        .headline { font-size: 15px; color: var(--text-secondary); margin-top: 4px; border-left: 3px solid var(--gold); padding-left: 12px; }
+        .theme-switch { display: flex; justify-content: flex-end; margin-bottom: 20px; }
+        .theme-btn { background: transparent; border: 1px solid var(--border); padding: 6px 12px; border-radius: var(--radius); cursor: pointer; font-size: 14px; color: var(--text-primary); }
 
-        /* типографика премиум */
-        h1 {
-            font-size: 28px;
-            font-weight: 500;
-            letter-spacing: -0.3px;
-            color: var(--text-primary);
-        }
-        .headline {
-            font-size: 15px;
-            color: var(--text-secondary);
-            margin-top: 4px;
-            border-left: 3px solid var(--gold);
-            padding-left: 12px;
-        }
-
-        /* карточки с чёткими гранями */
         .card {
             background: var(--surface);
             border: 1px solid var(--border);
@@ -82,18 +60,9 @@
             margin-bottom: 20px;
             box-shadow: var(--shadow);
         }
-        .card-title {
-            font-size: 18px;
-            font-weight: 500;
-            margin-bottom: 20px;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            color: var(--text-primary);
-            letter-spacing: -0.2px;
-        }
+        .card-title { font-size: 18px; font-weight: 500; margin-bottom: 20px; display: flex; align-items: center; gap: 8px; color: var(--text-primary); }
 
-        /* мастера – горизонтальный скролл (премиум) */
+        /* мастера — горизонтальный скролл */
         .masters-scroll {
             display: flex;
             overflow-x: auto;
@@ -109,43 +78,21 @@
             padding: 16px;
             cursor: pointer;
             transition: all 0.2s;
-            text-align: left;
         }
         .master-card.selected {
             border-color: var(--gold);
             background: var(--gold-light);
             color: #1c1c1e;
         }
-        .master-avatar {
-            font-size: 44px;
-            margin-bottom: 10px;
-        }
-        .master-name {
-            font-weight: 600;
-            font-size: 16px;
-        }
-        .rating {
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            margin-top: 8px;
-            font-size: 13px;
-        }
-        .stars {
-            color: var(--gold);
-            letter-spacing: 2px;
-        }
+        .master-avatar { font-size: 44px; margin-bottom: 10px; }
+        .master-name { font-weight: 600; font-size: 16px; }
+        .rating { display: flex; align-items: center; gap: 6px; margin-top: 8px; font-size: 13px; }
+        .stars { color: var(--gold); letter-spacing: 2px; }
 
-        /* услуги – список */
-        .services-list {
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-        }
+        /* услуги */
+        .services-list { display: flex; flex-direction: column; gap: 10px; }
         .service-item {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
+            display: flex; justify-content: space-between; align-items: center;
             padding: 14px 16px;
             background: var(--surface-elevated);
             border: 1px solid var(--border);
@@ -153,241 +100,89 @@
             cursor: pointer;
             transition: all 0.1s;
         }
-        .service-item.selected {
-            border-color: var(--gold);
-            background: var(--gold-light);
-            color: #1c1c1e;
-        }
-        .service-left {
-            display: flex;
-            flex-direction: column;
-            gap: 4px;
-        }
-        .service-name {
-            font-weight: 500;
-        }
-        .service-duration {
-            font-size: 13px;
-            color: var(--text-secondary);
-        }
-        .service-price {
-            font-weight: 600;
-            font-size: 18px;
-        }
+        .service-item.selected { border-color: var(--gold); background: var(--gold-light); color: #1c1c1e; }
+        .service-left { display: flex; flex-direction: column; gap: 4px; }
+        .service-name { font-weight: 500; }
+        .service-duration { font-size: 13px; color: var(--text-secondary); }
+        .service-price { font-weight: 600; font-size: 18px; }
 
         /* календарь */
-        .calendar-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 20px;
-        }
-        .month-selector {
-            background: transparent;
-            border: 1px solid var(--border);
-            color: var(--text-primary);
-            padding: 6px 12px;
-            border-radius: var(--radius);
-            cursor: pointer;
-            font-weight: 500;
-        }
-        .weekdays {
-            display: grid;
-            grid-template-columns: repeat(7, 1fr);
-            text-align: center;
-            font-size: 13px;
-            font-weight: 500;
-            color: var(--text-secondary);
-            margin-bottom: 12px;
-        }
-        .calendar-days {
-            display: grid;
-            grid-template-columns: repeat(7, 1fr);
-            gap: 8px;
-        }
+        .calendar-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+        .month-selector { background: transparent; border: 1px solid var(--border); color: var(--text-primary); padding: 6px 12px; border-radius: var(--radius); cursor: pointer; font-weight: 500; }
+        .weekdays { display: grid; grid-template-columns: repeat(7, 1fr); text-align: center; font-size: 13px; font-weight: 500; color: var(--text-secondary); margin-bottom: 12px; }
+        .calendar-days { display: grid; grid-template-columns: repeat(7, 1fr); gap: 8px; }
         .day-cell {
-            aspect-ratio: 1;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            background: var(--surface-elevated);
-            border-radius: var(--radius);
-            font-weight: 500;
-            cursor: pointer;
-            transition: 0.1s;
-            border: 1px solid var(--border);
+            aspect-ratio: 1; display: flex; align-items: center; justify-content: center;
+            background: var(--surface-elevated); border-radius: var(--radius); font-weight: 500;
+            cursor: pointer; transition: 0.1s; border: 1px solid var(--border);
         }
-        .day-cell.selected {
-            background: var(--gold);
-            color: #1c1c1e;
-            border-color: var(--gold);
-        }
-        .day-cell.disabled {
-            opacity: 0.3;
-            cursor: not-allowed;
-        }
-        .day-cell.available {
-            background: var(--gold-light);
-            color: #1c1c1e;
-        }
+        .day-cell.selected { background: var(--gold); color: #1c1c1e; border-color: var(--gold); }
+        .day-cell.disabled { opacity: 0.3; cursor: not-allowed; }
+        .day-cell.available { background: var(--gold-light); color: #1c1c1e; }
 
         /* слоты времени */
-        .time-slots {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 12px;
-            margin-top: 8px;
-        }
+        .time-slots { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 8px; }
         .time-slot {
-            background: var(--surface-elevated);
-            border: 1px solid var(--border);
-            padding: 8px 20px;
-            border-radius: var(--radius);
-            font-weight: 500;
-            cursor: pointer;
+            background: var(--surface-elevated); border: 1px solid var(--border);
+            padding: 8px 20px; border-radius: var(--radius);
+            font-weight: 500; cursor: pointer;
         }
-        .time-slot.selected {
-            background: var(--gold);
-            border-color: var(--gold);
-            color: #1c1c1e;
-        }
+        .time-slot.selected { background: var(--gold); border-color: var(--gold); color: #1c1c1e; }
 
         /* поля ввода */
         .input-field {
-            width: 100%;
-            padding: 12px 16px;
-            background: var(--surface-elevated);
-            border: 1px solid var(--border);
-            border-radius: var(--radius);
-            color: var(--text-primary);
-            font-size: 15px;
-            margin-bottom: 16px;
+            width: 100%; padding: 12px 16px;
+            background: var(--surface-elevated); border: 1px solid var(--border);
+            border-radius: var(--radius); color: var(--text-primary);
+            font-size: 15px; margin-bottom: 16px;
         }
-        textarea.input-field {
-            resize: vertical;
-        }
+        textarea.input-field { resize: vertical; }
 
-        /* итоговая карточка */
-        .summary-card {
-            background: var(--surface-elevated);
-            border: 1px solid var(--border);
-            border-radius: var(--radius);
-            padding: 20px;
-            margin: 20px 0;
-        }
-        .summary-row {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 12px;
-            font-size: 15px;
-        }
+        /* итог */
+        .summary-card { background: var(--surface-elevated); border: 1px solid var(--border); border-radius: var(--radius); padding: 20px; margin: 20px 0; }
+        .summary-row { display: flex; justify-content: space-between; margin-bottom: 12px; font-size: 15px; }
 
         /* кнопки */
         .btn {
-            width: 100%;
-            padding: 14px;
-            background: var(--accent);
-            color: white;
-            border: none;
-            border-radius: var(--radius);
-            font-weight: 600;
-            font-size: 16px;
-            cursor: pointer;
-            transition: 0.2s;
+            width: 100%; padding: 14px;
+            background: var(--accent); color: white;
+            border: none; border-radius: var(--radius);
+            font-weight: 600; font-size: 16px;
+            cursor: pointer; transition: 0.2s;
         }
         .btn:hover { background: var(--accent-hover); }
-        .btn-secondary {
-            background: transparent;
-            border: 1px solid var(--border);
-            color: var(--text-primary);
-        }
-        .btn-secondary:hover {
-            background: var(--surface-elevated);
-        }
+        .btn-secondary { background: transparent; border: 1px solid var(--border); color: var(--text-primary); }
+        .btn-secondary:hover { background: var(--surface-elevated); }
 
         /* нижнее меню */
         .bottom-nav {
-            position: fixed;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            background: var(--surface);
-            border-top: 1px solid var(--border);
-            display: flex;
-            justify-content: space-around;
-            padding: 12px 20px 24px;
-            backdrop-filter: blur(12px);
+            position: fixed; bottom: 0; left: 0; right: 0;
+            background: var(--surface); border-top: 1px solid var(--border);
+            display: flex; justify-content: space-around;
+            padding: 12px 20px 24px; backdrop-filter: blur(12px);
         }
         .nav-item {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 4px;
-            font-size: 12px;
-            color: var(--text-secondary);
-            cursor: pointer;
+            display: flex; flex-direction: column; align-items: center; gap: 4px;
+            font-size: 12px; color: var(--text-secondary); cursor: pointer;
         }
-        .nav-item.active {
-            color: var(--gold);
-        }
-        .nav-icon {
-            font-size: 22px;
-        }
+        .nav-item.active { color: var(--gold); }
+        .nav-icon { font-size: 22px; }
 
-        /* экраны */
-        .screen {
-            display: none;
-        }
-        .screen.active {
-            display: block;
-        }
+        .screen { display: none; }
+        .screen.active { display: block; }
 
-        /* стили для записей в профиле */
         .booking-card {
-            background: var(--surface-elevated);
-            border: 1px solid var(--border);
-            border-radius: var(--radius);
-            padding: 16px;
-            margin-bottom: 12px;
+            background: var(--surface-elevated); border: 1px solid var(--border);
+            border-radius: var(--radius); padding: 16px; margin-bottom: 12px;
         }
-        .progress-bar {
-            background: var(--surface-elevated);
-            border-radius: 4px;
-            height: 6px;
-            overflow: hidden;
-            margin: 12px 0;
-        }
-        .progress-fill {
-            background: var(--gold);
-            height: 100%;
-            width: 0%;
-        }
-        .flex-between {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-        .text-muted {
-            color: var(--text-secondary);
-            font-size: 13px;
-        }
-        .hidden {
-            display: none;
-        }
-        .theme-switch {
-            display: flex;
-            justify-content: flex-end;
-            margin-bottom: 20px;
-        }
-        .theme-btn {
-            background: transparent;
-            border: 1px solid var(--border);
-            padding: 6px 12px;
-            border-radius: var(--radius);
-            cursor: pointer;
-            font-size: 14px;
-            color: var(--text-primary);
-        }
+        .progress-bar { background: var(--surface-elevated); border-radius: 4px; height: 6px; overflow: hidden; margin: 12px 0; }
+        .progress-fill { background: var(--gold); height: 100%; width: 0%; }
+        .flex-between { display: flex; justify-content: space-between; align-items: center; }
+        .text-muted { color: var(--text-secondary); font-size: 13px; }
+        .hidden { display: none; }
+        .cancel-btn { background: transparent; border: 1px solid var(--border); border-radius: var(--radius); padding: 4px 12px; cursor: pointer; color: var(--text-secondary); }
+        .gallery-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; }
+        .gallery-item { background: var(--surface-elevated); border-radius: var(--radius); padding: 24px; text-align: center; font-size: 32px; }
     </style>
 </head>
 <body>
@@ -400,31 +195,26 @@
 
     <!-- ЭКРАН ЗАПИСИ -->
     <div id="bookingScreen" class="screen active">
-        <!-- мастера -->
         <div class="card">
             <div class="card-title">👨‍🦰 Выбрать мастера</div>
             <div class="masters-scroll" id="mastersList"></div>
         </div>
 
-        <!-- услуги -->
         <div class="card">
             <div class="card-title">💈 Выбрать услугу</div>
             <div class="services-list" id="servicesList"></div>
         </div>
 
-        <!-- календарь -->
         <div class="card">
             <div class="card-title">📅 Выбрать дату</div>
             <div id="calendarWidget"></div>
         </div>
 
-        <!-- слоты -->
         <div class="card">
             <div class="card-title">⏰ Выбрать время</div>
             <div id="timeSlotsContainer" class="time-slots">Сначала выберите мастера и дату</div>
         </div>
 
-        <!-- контакты -->
         <div class="card">
             <div class="card-title">📞 Контактные данные</div>
             <input type="tel" id="phoneInput" class="input-field" placeholder="+7 999 123-45-67">
@@ -444,7 +234,7 @@
         </div>
     </div>
 
-    <!-- ПРОФИЛЬ + ЛОЯЛЬНОСТЬ -->
+    <!-- ПРОФИЛЬ -->
     <div id="profileScreen" class="screen">
         <div class="card">
             <div class="card-title">👤 Профиль</div>
@@ -465,11 +255,11 @@
     <div id="aboutScreen" class="screen">
         <div class="card">
             <div class="card-title">📸 Галерея</div>
-            <div style="display:grid; grid-template-columns:repeat(2,1fr); gap:12px;">
-                <div class="text-muted" style="background:var(--surface-elevated); border-radius:var(--radius); padding:24px; text-align:center;">✂️</div>
-                <div class="text-muted" style="background:var(--surface-elevated); border-radius:var(--radius); padding:24px; text-align:center;">🧔</div>
-                <div class="text-muted" style="background:var(--surface-elevated); border-radius:var(--radius); padding:24px; text-align:center;">💈</div>
-                <div class="text-muted" style="background:var(--surface-elevated); border-radius:var(--radius); padding:24px; text-align:center;">✨</div>
+            <div class="gallery-grid">
+                <div class="gallery-item">✂️</div>
+                <div class="gallery-item">🧔</div>
+                <div class="gallery-item">💈</div>
+                <div class="gallery-item">✨</div>
             </div>
         </div>
         <div class="card">
@@ -483,7 +273,7 @@
 
 <!-- нижняя навигация -->
 <div class="bottom-nav">
-    <div class="nav-item" data-screen="booking"><span class="nav-icon">✂️</span><span>Запись</span></div>
+    <div class="nav-item active" data-screen="booking"><span class="nav-icon">✂️</span><span>Запись</span></div>
     <div class="nav-item" data-screen="myBookings"><span class="nav-icon">📋</span><span>Мои записи</span></div>
     <div class="nav-item" data-screen="profile"><span class="nav-icon">👤</span><span>Профиль</span></div>
     <div class="nav-item" data-screen="about"><span class="nav-icon">ℹ️</span><span>О нас</span></div>
@@ -496,7 +286,6 @@
     tg.expand();
     tg.ready();
 
-    // API (рубли)
     const API_URL = "https://functions.yandexcloud.net/d4eho1fu83ho2dusd781";
     let currentUser = {
         id: tg.initDataUnsafe?.user?.id || 0,
@@ -519,20 +308,21 @@
     };
     applyTheme();
 
-    // ----- ДАННЫЕ (рубли) -----
-    const masters = [
-        { id: "Александр", name: "Александр", spec: "топ-мастер, 7 лет", avatar: "✂️", rating: 4.9, reviews: 128 },
-        { id: "Дмитрий", name: "Дмитрий", spec: "борода, 5 лет", avatar: "🧔", rating: 4.8, reviews: 94 },
-        { id: "Михаил", name: "Михаил", spec: "премиум, 10 лет", avatar: "💈", rating: 4.9, reviews: 156 }
-    ];
+    // ----- ДАННЫЕ -----
+    let masters = [];
+    let selectedMaster = null;
+    let selectedService = null;
+    let selectedDate = null;
+    let selectedTime = null;
+    let availableSlots = [];
+    let currentMonth = new Date();
+
     const services = [
         { id: 1, name: "Мужская стрижка", price: 2500, duration: 45 },
         { id: 2, name: "Стрижка + борода", price: 3500, duration: 60 },
         { id: 3, name: "Королевское бритьё", price: 2000, duration: 40 },
         { id: 4, name: "Детская стрижка", price: 1500, duration: 30 }
     ];
-    let selectedMaster = null, selectedService = null, selectedDate = null, selectedTime = null, availableSlots = [];
-    let currentMonth = new Date();
 
     // ----- API -----
     async function callAPI(action, payload = {}) {
@@ -543,34 +333,60 @@
         });
         return await res.json();
     }
+
     async function fetchFreeSlots(date, masterName) {
         const data = await callAPI('getFreeSlots', { date, masterId: masterName });
         return data.slots || [];
     }
+
     async function createBooking(bookingData) {
         return await callAPI('book', { booking: bookingData });
     }
+
     async function getAllBookings() {
         const data = await callAPI('getAllBookings');
         return data.bookings || [];
     }
+
     async function cancelBookingAPI(bookingId) {
         return await callAPI('cancelBooking', { bookingId });
     }
+
     async function getClientData(clientId) {
         if (!clientId) return null;
         const data = await callAPI('getClient', { clientId });
         return data.client;
     }
 
+    async function loadBarbers() {
+        // Сначала пробуем загрузить из localStorage (синхронизация с админкой)
+        const local = localStorage.getItem('barbersData');
+        if (local) {
+            try {
+                masters = JSON.parse(local);
+                console.log('Barbers loaded from localStorage:', masters.length);
+                return;
+            } catch (e) {}
+        }
+        // Если нет — запрашиваем из API
+        const data = await callAPI('getBarbers', {});
+        masters = data.barbers || [];
+        localStorage.setItem('barbersData', JSON.stringify(masters));
+        console.log('Barbers loaded from API:', masters.length);
+    }
+
     // ----- UI -----
     function renderMasters() {
         const container = document.getElementById('mastersList');
+        if (!masters.length) {
+            container.innerHTML = '<div class="text-muted">Загрузка мастеров...</div>';
+            return;
+        }
         container.innerHTML = masters.map(m => `
             <div class="master-card ${selectedMaster?.id === m.id ? 'selected' : ''}" data-id="${m.id}">
-                <div class="master-avatar">${m.avatar}</div>
+                <div class="master-avatar">${m.avatar || '✂️'}</div>
                 <div class="master-name">${m.name}</div>
-                <div class="rating"><span class="stars">${'★'.repeat(Math.floor(m.rating))}${m.rating%1>=0.5?'½':''}${'☆'.repeat(5-Math.ceil(m.rating))}</span> ${m.rating}</div>
+                <div class="rating"><span class="stars">${'★'.repeat(Math.floor(m.rating || 4.5))}${(m.rating || 4.5) % 1 >= 0.5 ? '½' : ''}${'☆'.repeat(5 - Math.ceil(m.rating || 4.5))}</span> ${m.rating || 4.5}</div>
             </div>
         `).join('');
         document.querySelectorAll('.master-card').forEach(el => {
@@ -645,7 +461,7 @@
 
     async function loadSlotsAndRender() {
         if (!selectedMaster || !selectedDate) return;
-        const slots = await fetchFreeSlots(selectedDate, selectedMaster.id);
+        const slots = await fetchFreeSlots(selectedDate, selectedMaster.name);
         availableSlots = slots;
         const container = document.getElementById('timeSlotsContainer');
         if (!availableSlots.length) { container.innerHTML = '<div class="text-muted">Нет свободных окон</div>'; return; }
@@ -719,13 +535,13 @@
         for (let b of user) {
             html += `<div class="booking-card">
                 <div class="flex-between"><span class="text-muted">${b.date} в ${b.time}</span>
-                <button class="cancelBtn" data-id="${b.booking_id}" style="background:transparent; border:1px solid var(--border); border-radius:6px; padding:4px 12px; cursor:pointer;">Отменить</button></div>
+                <button class="cancel-btn" data-id="${b.booking_id}">Отменить</button></div>
                 <div><strong>${b.service}</strong> — ${b.master}</div>
                 <div>${b.price} ₽</div>
             </div>`;
         }
         container.innerHTML = html;
-        document.querySelectorAll('.cancelBtn').forEach(btn => {
+        document.querySelectorAll('.cancel-btn').forEach(btn => {
             btn.addEventListener('click', async () => {
                 if(confirm('Отменить запись?')) {
                     await cancelBookingAPI(btn.dataset.id);
@@ -756,7 +572,7 @@
         `;
     }
 
-    // ----- Навигация -----
+    // ----- НАВИГАЦИЯ -----
     function switchScreen(screenId) {
         document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
         document.getElementById(screenId + 'Screen').classList.add('active');
@@ -768,19 +584,33 @@
     document.querySelectorAll('.nav-item').forEach(nav => {
         nav.addEventListener('click', () => switchScreen(nav.dataset.screen));
     });
-    document.getElementById('logoutFakeBtn')?.addEventListener('click', () => {
-        localStorage.removeItem('userPhone');
-        currentUser.phone = '';
-        document.getElementById('phoneInput').value = '';
-        alert('Данные очищены');
-    });
-    document.getElementById('submitBookingBtn').onclick = submitBooking;
 
-    renderMasters();
-    renderServices();
-    renderCalendar();
-    if (currentUser.phone) document.getElementById('phoneInput').value = currentUser.phone;
-    if (currentUser.id !== 0) loadProfileData();
+    // ----- ИНИЦИАЛИЗАЦИЯ -----
+    async function init() {
+        await loadBarbers();
+        renderMasters();
+        renderServices();
+        renderCalendar();
+        if (currentUser.phone) document.getElementById('phoneInput').value = currentUser.phone;
+        if (currentUser.id !== 0) await loadProfileData();
+        document.getElementById('submitBookingBtn').onclick = submitBooking;
+        document.getElementById('logoutFakeBtn').onclick = () => {
+            localStorage.removeItem('userPhone');
+            currentUser.phone = '';
+            document.getElementById('phoneInput').value = '';
+            alert('Данные очищены');
+        };
+        // Подписка на изменения барберов из админки
+        window.addEventListener('storage', (e) => {
+            if (e.key === 'barbersData') {
+                try {
+                    masters = JSON.parse(e.newValue);
+                    renderMasters();
+                } catch (e) {}
+            }
+        });
+    }
+    init();
 </script>
 </body>
 </html>
