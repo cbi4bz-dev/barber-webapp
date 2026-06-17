@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
     <title>BarberShop — Администрирование</title>
     <style>
-        /* ----- ТЁМНАЯ ТЕМА (тренд 2025) ----- */
         :root {
             --bg-primary: #0a0a0f;
             --bg-secondary: #0f0f18;
@@ -22,7 +21,6 @@
             --shadow: 0 4px 20px rgba(0, 0, 0, 0.6);
             --radius: 8px;
         }
-
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
             background: var(--bg-primary);
@@ -52,14 +50,6 @@
             align-items: center;
             gap: 10px;
         }
-        .card-title .badge {
-            font-size: 12px;
-            background: var(--gold);
-            color: #0a0a0f;
-            padding: 2px 12px;
-            border-radius: 20px;
-            font-weight: 600;
-        }
         .tabs {
             display: flex;
             flex-wrap: wrap;
@@ -77,11 +67,7 @@
             transition: 0.15s;
         }
         .tab:hover { border-color: var(--gold); color: var(--text-primary); }
-        .tab.active {
-            background: var(--gold);
-            border-color: var(--gold);
-            color: #0a0a0f;
-        }
+        .tab.active { background: var(--gold); border-color: var(--gold); color: #0a0a0f; }
         .booking-item, .barber-item, .service-item-crud {
             background: var(--surface-elevated);
             border: 1px solid var(--border);
@@ -117,7 +103,6 @@
         .btn-secondary:hover { background: var(--surface-elevated); border-color: var(--gold); }
         .btn-danger { background: var(--danger); color: #0a0a0f; }
         .btn-danger:hover { opacity: 0.8; }
-        .btn-success { background: var(--success); color: #0a0a0f; }
         .btn-sm { padding: 4px 14px; width: auto; font-size: 13px; }
         .input-field {
             width: 100%;
@@ -183,15 +168,7 @@
             overflow: hidden;
             flex-shrink: 0;
         }
-        .barber-avatar img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
-        .barber-avatar-placeholder {
-            color: var(--text-secondary);
-            font-size: 28px;
-        }
+        .barber-avatar img { width: 100%; height: 100%; object-fit: cover; }
         .toast {
             position: fixed;
             bottom: 80px;
@@ -220,7 +197,6 @@
     <h1>✂️ BarberShop</h1>
     <div class="headline">Администрирование</div>
 
-    <!-- ЛОГИН -->
     <div id="loginSection" class="card login-box">
         <div class="card-title">🔐 Вход</div>
         <input type="password" id="adminPassword" class="input-field" placeholder="Пароль">
@@ -228,7 +204,6 @@
         <div id="loginError" class="text-muted" style="color:var(--danger); margin-top:12px; display:none;">Неверный пароль</div>
     </div>
 
-    <!-- АДМИНКА -->
     <div id="adminSection" class="hidden">
         <div class="tabs" id="tabContainer">
             <div class="tab active" data-tab="all">📋 Записи</div>
@@ -239,62 +214,24 @@
             <div class="tab" data-tab="slots">⏰ Слоты</div>
             <div class="tab" data-tab="stats">📊 Статистика</div>
         </div>
-
-        <div id="contentArea">
-            <div class="text-muted" style="text-align:center; padding:40px 0;">Загрузка...</div>
-        </div>
+        <div id="contentArea"><div class="text-muted" style="text-align:center; padding:40px 0;">Загрузка...</div></div>
     </div>
 </div>
 
-<!-- Toast-уведомление -->
 <div id="toast" class="toast"></div>
 
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
 <script>
-    // ---------- ИНИЦИАЛИЗАЦИЯ ----------
     const API_URL = "https://functions.yandexcloud.net/d4eho1fu83ho2dusd781";
     const ADMIN_PASSWORD = "admin123";
 
-    // LOGIN
-    const loginSection = document.getElementById('loginSection');
-    const adminSection = document.getElementById('adminSection');
-    const loginBtn = document.getElementById('loginBtn');
-    const adminPassword = document.getElementById('adminPassword');
-    const loginError = document.getElementById('loginError');
-
-    loginBtn.onclick = () => {
-        if (adminPassword.value === ADMIN_PASSWORD) {
-            loginSection.classList.add('hidden');
-            adminSection.classList.remove('hidden');
-            loginError.style.display = 'none';
-            loadTab('all');
-            localStorage.setItem('adminLogged', 'true');
-        } else {
-            loginError.style.display = 'block';
-        }
-    };
-    if (localStorage.getItem('adminLogged') === 'true') {
-        loginSection.classList.add('hidden');
-        adminSection.classList.remove('hidden');
-        loadTab('all');
-    }
-
-    // ПЕРЕКЛЮЧЕНИЕ ВКЛАДОК
-    document.querySelectorAll('.tab').forEach(tab => {
-        tab.addEventListener('click', () => {
-            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-            tab.classList.add('active');
-            loadTab(tab.dataset.tab);
-        });
-    });
-
     // ---------- TOAST ----------
-    function showToast(message, type = '') {
-        const toast = document.getElementById('toast');
-        toast.textContent = message;
-        toast.className = 'toast ' + type;
-        setTimeout(() => toast.classList.add('show'), 10);
-        setTimeout(() => toast.classList.remove('show'), 3000);
+    function showToast(msg, type = '') {
+        const t = document.getElementById('toast');
+        t.textContent = msg;
+        t.className = 'toast ' + type;
+        setTimeout(() => t.classList.add('show'), 10);
+        setTimeout(() => t.classList.remove('show'), 3000);
     }
 
     // ---------- API ----------
@@ -312,7 +249,33 @@
         }
     }
 
-    // ---------- ЗАГРУЗКА ВКЛАДОК ----------
+    // ---------- ЛОГИН ----------
+    document.getElementById('loginBtn').onclick = () => {
+        if (document.getElementById('adminPassword').value === ADMIN_PASSWORD) {
+            document.getElementById('loginSection').classList.add('hidden');
+            document.getElementById('adminSection').classList.remove('hidden');
+            document.getElementById('loginError').style.display = 'none';
+            localStorage.setItem('adminLogged', 'true');
+            loadTab('all');
+        } else {
+            document.getElementById('loginError').style.display = 'block';
+        }
+    };
+    if (localStorage.getItem('adminLogged') === 'true') {
+        document.getElementById('loginSection').classList.add('hidden');
+        document.getElementById('adminSection').classList.remove('hidden');
+        loadTab('all');
+    }
+
+    // ---------- ВКЛАДКИ ----------
+    document.querySelectorAll('.tab').forEach(tab => {
+        tab.addEventListener('click', () => {
+            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+            tab.classList.add('active');
+            loadTab(tab.dataset.tab);
+        });
+    });
+
     async function loadTab(tab) {
         const area = document.getElementById('contentArea');
         if (tab === 'all') await showAllBookings(area);
@@ -324,7 +287,9 @@
         else if (tab === 'stats') await showStats(area);
     }
 
-    // ---------- ВСЕ ЗАПИСИ (ОТМЕНА, НЕ УДАЛЕНИЕ) ----------
+    // ============================================================
+    // 1. ЗАПИСИ (ВСЕ)
+    // ============================================================
     async function showAllBookings(area) {
         area.innerHTML = '<div class="text-muted">Загрузка...</div>';
         const data = await callAPI('getAllBookings');
@@ -334,10 +299,7 @@
             return;
         }
         const grouped = {};
-        bookings.forEach(b => {
-            if (!grouped[b.date]) grouped[b.date] = [];
-            grouped[b.date].push(b);
-        });
+        bookings.forEach(b => { if (!grouped[b.date]) grouped[b.date] = []; grouped[b.date].push(b); });
         let html = '';
         Object.keys(grouped).sort().reverse().forEach(date => {
             html += `<div class="text-muted" style="margin: 12px 0 8px; font-weight:500;">${date}</div>`;
@@ -357,6 +319,7 @@
                         <div><strong>${b.client_name}</strong> — ${b.service}</div>
                         <div>👨‍🦰 ${b.master}</div>
                         <div>${b.price} ₽</div>
+                        ${isCancelled ? '<div style="color:var(--danger); font-size:12px; margin-top:4px;">⛔ Отменена</div>' : ''}
                     </div>
                 `;
             });
@@ -366,7 +329,9 @@
         attachEditEvents(area);
     }
 
-    // ---------- СЕГОДНЯ ----------
+    // ============================================================
+    // 2. ЗАПИСИ (СЕГОДНЯ)
+    // ============================================================
     async function showTodayBookings(area) {
         area.innerHTML = '<div class="text-muted">Загрузка...</div>';
         const today = new Date().toISOString().split('T')[0];
@@ -393,6 +358,7 @@
                     <div><strong>${b.client_name}</strong> — ${b.service}</div>
                     <div>👨‍🦰 ${b.master}</div>
                     <div>${b.price} ₽</div>
+                    ${isCancelled ? '<div style="color:var(--danger); font-size:12px; margin-top:4px;">⛔ Отменена</div>' : ''}
                 </div>
             `;
         });
@@ -401,45 +367,77 @@
         attachEditEvents(area);
     }
 
-    // ---------- ОТМЕНА ЗАПИСИ ----------
+    // ============================================================
+    // 3. ОТМЕНА ЗАПИСИ
+    // ============================================================
     function attachCancelEvents(container) {
-        container.querySelectorAll('.booking-cancel-btn:not(.btn-secondary)').forEach(btn => {
+        container.querySelectorAll('.booking-cancel-btn').forEach(btn => {
+            btn.replaceWith(btn.cloneNode(true));
+        });
+        container.querySelectorAll('.booking-cancel-btn').forEach(btn => {
             btn.onclick = async (e) => {
                 e.stopPropagation();
-                const id = btn.dataset.id;
+                e.preventDefault();
+                const item = btn.closest('.booking-item');
+                if (!item) { showToast('❌ Ошибка', 'error'); return; }
+                const id = item.dataset.id;
+                if (!id) { showToast('❌ Ошибка', 'error'); return; }
+                if (btn.textContent.trim() === '✅ Отменена') {
+                    showToast('Запись уже отменена', 'error');
+                    return;
+                }
                 if (!confirm('Отменить запись?')) return;
-                const result = await callAPI('cancelBooking', { bookingId: id });
-                if (result.success) {
-                    showToast('✅ Запись отменена', 'success');
-                    const activeTab = document.querySelector('.tab.active').dataset.tab;
-                    loadTab(activeTab);
-                } else {
-                    showToast('❌ Ошибка отмены', 'error');
+                try {
+                    const result = await callAPI('cancelBooking', { bookingId: id });
+                    if (result.success) {
+                        showToast('✅ Запись отменена', 'success');
+                        const activeTab = document.querySelector('.tab.active');
+                        if (activeTab) loadTab(activeTab.dataset.tab);
+                    } else {
+                        showToast('❌ Ошибка: ' + (result.error || 'неизвестная'), 'error');
+                    }
+                } catch (err) {
+                    showToast('❌ Ошибка сети', 'error');
                 }
             };
         });
     }
 
-    // ---------- РЕДАКТИРОВАНИЕ ЗАПИСИ ----------
+    // ============================================================
+    // 4. РЕДАКТИРОВАНИЕ ЗАПИСИ
+    // ============================================================
     function attachEditEvents(container) {
+        container.querySelectorAll('.edit-booking-btn').forEach(btn => {
+            btn.replaceWith(btn.cloneNode(true));
+        });
         container.querySelectorAll('.edit-booking-btn').forEach(btn => {
             btn.onclick = (e) => {
                 e.stopPropagation();
-                showEditBookingForm(btn.dataset.id);
+                e.preventDefault();
+                const item = btn.closest('.booking-item');
+                if (!item) { showToast('❌ Ошибка', 'error'); return; }
+                const id = item.dataset.id;
+                if (!id) { showToast('❌ Ошибка', 'error'); return; }
+                const cancelBtn = item.querySelector('.booking-cancel-btn');
+                if (cancelBtn && cancelBtn.textContent.trim() === '✅ Отменена') {
+                    showToast('❌ Нельзя редактировать отменённую запись', 'error');
+                    return;
+                }
+                showEditBookingForm(id);
             };
         });
     }
 
     async function showEditBookingForm(bookingId) {
-        const data = await callAPI('getAllBookings');
-        const booking = data.bookings.find(b => b.booking_id === bookingId);
-        if (!booking) { showToast('Запись не найдена', 'error'); return; }
-
         const area = document.getElementById('contentArea');
+        const allData = await callAPI('getAllBookings');
+        const booking = allData.bookings.find(b => b.booking_id === bookingId);
+        if (!booking) { showToast('❌ Запись не найдена', 'error'); return; }
+
         const barbersRes = await callAPI('getBarbers');
         const masters = (barbersRes.barbers || []).map(b => b.name);
         const servicesRes = await callAPI('getServices');
-        const servicesList = servicesRes.services || [
+        let servicesList = servicesRes.services || [
             { id: 1, name: 'Мужская стрижка', price: 2500, duration: 45 },
             { id: 2, name: 'Стрижка + борода', price: 3500, duration: 60 },
             { id: 3, name: 'Королевское бритьё', price: 2000, duration: 40 },
@@ -452,45 +450,43 @@
             <div class="card">
                 <div class="card-title">✏️ Редактирование записи</div>
                 <div class="text-muted" style="margin-bottom:16px;">Клиент: <strong>${booking.client_name}</strong></div>
-                <select id="editMaster" class="input-field">${masters.map(m => `<option value="${m}" ${m === booking.master ? 'selected' : ''}>${m}</option>`).join('')}</select>
-                <select id="editService" class="input-field">${servicesList.map(s => `<option value="${s.name}" ${s.name === booking.service ? 'selected' : ''}>${s.name} (${s.price} ₽)</option>`).join('')}</select>
-                <input type="date" id="editDate" class="input-field" value="${booking.date}">
-                <select id="editTime" class="input-field">${allSlots.map(t => `<option value="${t}" ${t === booking.time ? 'selected' : ''}>${t}</option>`).join('')}</select>
-                <div class="flex-between gap-8">
-                    <button id="saveEditBookingBtn" class="btn" style="flex:1;">💾 Сохранить</button>
-                    <button id="cancelEditBookingBtn" class="btn btn-secondary" style="flex:1;">Отмена</button>
-                </div>
+                ${booking.status === 'cancelled' ? '<div style="color:var(--danger); margin-bottom:16px;">⚠️ Запись отменена, редактирование недоступно</div>' : `
+                    <select id="editMaster" class="input-field">${masters.map(m => `<option value="${m}" ${m === booking.master ? 'selected' : ''}>${m}</option>`).join('')}</select>
+                    <select id="editService" class="input-field">${servicesList.map(s => `<option value="${s.name}" ${s.name === booking.service ? 'selected' : ''}>${s.name} (${s.price} ₽)</option>`).join('')}</select>
+                    <input type="date" id="editDate" class="input-field" value="${booking.date}">
+                    <select id="editTime" class="input-field">${allSlots.map(t => `<option value="${t}" ${t === booking.time ? 'selected' : ''}>${t}</option>`).join('')}</select>
+                    <div class="flex-between gap-8">
+                        <button id="saveEditBookingBtn" class="btn" style="flex:1;">💾 Сохранить</button>
+                        <button id="cancelEditBookingBtn" class="btn btn-secondary" style="flex:1;">Отмена</button>
+                    </div>
+                `}
             </div>
         `;
+        if (booking.status === 'cancelled') return;
 
         document.getElementById('saveEditBookingBtn').onclick = async () => {
             const newMaster = document.getElementById('editMaster').value;
             const newService = document.getElementById('editService').value;
             const newDate = document.getElementById('editDate').value;
             const newTime = document.getElementById('editTime').value;
-
             const updatedBooking = { ...booking, master: newMaster, service: newService, date: newDate, time: newTime };
-            const result = await callAPI('updateBooking', { booking: updatedBooking });
-            if (result.success) {
-                showToast('✅ Запись обновлена', 'success');
-                loadTab('all');
-            } else {
-                showToast('❌ Ошибка обновления', 'error');
-            }
+            try {
+                const result = await callAPI('updateBooking', { booking: updatedBooking });
+                if (result.success) { showToast('✅ Запись обновлена', 'success'); loadTab('all'); }
+                else { showToast('❌ Ошибка: ' + (result.error || 'неизвестная'), 'error'); }
+            } catch (err) { showToast('❌ Ошибка сети', 'error'); }
         };
-
         document.getElementById('cancelEditBookingBtn').onclick = () => loadTab('all');
     }
 
-    // ---------- КЛИЕНТЫ ----------
+    // ============================================================
+    // 5. КЛИЕНТЫ
+    // ============================================================
     async function showClients(area) {
         area.innerHTML = '<div class="text-muted">Загрузка...</div>';
         const data = await callAPI('getAllClients');
         const clients = data.clients || [];
-        if (!clients.length) {
-            area.innerHTML = '<div class="text-muted" style="text-align:center; padding:40px 0;">Нет клиентов</div>';
-            return;
-        }
+        if (!clients.length) { area.innerHTML = '<div class="text-muted" style="text-align:center; padding:40px 0;">Нет клиентов</div>'; return; }
         let html = '';
         clients.forEach(c => {
             html += `
@@ -517,62 +513,49 @@
     async function showClientDetail(area, clientId) {
         const clientData = await callAPI('getClient', { clientId });
         const client = clientData.client;
-        if (!client) {
-            area.innerHTML = '<div class="text-muted">Клиент не найден</div>';
-            return;
-        }
+        if (!client) { area.innerHTML = '<div class="text-muted">Клиент не найден</div>'; return; }
         const all = await callAPI('getAllBookings');
         const clientBookings = (all.bookings || []).filter(b => b.client_id == clientId && b.status !== 'cancelled');
         let html = `<button class="back-btn" onclick="loadTab('clients')">← Назад</button>
-            <div class="card">
-                <div class="card-title">👤 ${client.name || 'Гость'}</div>
-                <div><span class="text-muted">Telegram:</span> ${client.username ? '@'+client.username : '—'}</div>
-                <div><span class="text-muted">Телефон:</span> ${client.phone || '—'}</div>
-                <div><span class="text-muted">Всего визитов:</span> ${client.total_visits || 0}</div>
-                <div><span class="text-muted">Потрачено:</span> ${client.total_spent || 0} ₽</div>
-                <div><span class="text-muted">Любимый мастер:</span> ${client.preferred_master || '—'}</div>
-            </div>
-            <div class="card">
-                <div class="card-title">📋 История записей</div>`;
-        if (!clientBookings.length) {
-            html += `<div class="text-muted">Нет записей</div>`;
-        } else {
-            clientBookings.forEach(b => {
-                html += `<div class="booking-item"><span class="booking-time">${b.date} ${b.time}</span> — ${b.service}, ${b.price} ₽</div>`;
-            });
-        }
+            <div class="card"><div class="card-title">👤 ${client.name || 'Гость'}</div>
+            <div><span class="text-muted">Telegram:</span> ${client.username ? '@'+client.username : '—'}</div>
+            <div><span class="text-muted">Телефон:</span> ${client.phone || '—'}</div>
+            <div><span class="text-muted">Всего визитов:</span> ${client.total_visits || 0}</div>
+            <div><span class="text-muted">Потрачено:</span> ${client.total_spent || 0} ₽</div>
+            <div><span class="text-muted">Любимый мастер:</span> ${client.preferred_master || '—'}</div></div>
+            <div class="card"><div class="card-title">📋 История записей</div>`;
+        if (!clientBookings.length) html += `<div class="text-muted">Нет записей</div>`;
+        else clientBookings.forEach(b => {
+            html += `<div class="booking-item"><span class="booking-time">${b.date} ${b.time}</span> — ${b.service}, ${b.price} ₽</div>`;
+        });
         html += `</div>`;
         area.innerHTML = html;
     }
 
-    // ---------- БАРБЕРЫ (с фото) ----------
+    // ============================================================
+    // 6. БАРБЕРЫ
+    // ============================================================
     let barbersData = [];
-
     async function showBarbers(area) {
         const data = await callAPI('getBarbers');
         barbersData = data.barbers || [];
         localStorage.setItem('barbersData', JSON.stringify(barbersData));
 
         let html = `
-            <div class="card">
-                <div class="card-title">💈 Список барберов</div>
-                <div id="barbersList"></div>
-                <button id="addBarberBtn" class="btn btn-secondary mt-16">➕ Добавить барбера</button>
-            </div>
+            <div class="card"><div class="card-title">💈 Список барберов</div><div id="barbersList"></div>
+            <button id="addBarberBtn" class="btn btn-secondary mt-16">➕ Добавить барбера</button></div>
             <div id="barberFormContainer" class="hidden">
-                <div class="card">
-                    <div class="card-title" id="barberFormTitle">✏️ Редактирование барбера</div>
-                    <input type="text" id="barberName" class="input-field" placeholder="Имя">
-                    <input type="text" id="barberSpec" class="input-field" placeholder="Специализация, стаж">
-                    <input type="text" id="barberAvatar" class="input-field" placeholder="Ссылка на фото (URL) или эмодзи">
-                    <input type="number" id="barberRating" class="input-field" placeholder="Рейтинг (например, 4.9)" step="0.1">
-                    <input type="number" id="barberReviews" class="input-field" placeholder="Количество отзывов">
-                    <textarea id="barberDescription" class="input-field" rows="3" placeholder="Описание, достижения..."></textarea>
-                    <div class="flex-between gap-8">
-                        <button id="saveBarberBtn" class="btn" style="flex:1;">💾 Сохранить</button>
-                        <button id="cancelBarberBtn" class="btn btn-secondary" style="flex:1;">Отмена</button>
-                    </div>
-                </div>
+                <div class="card"><div class="card-title" id="barberFormTitle">✏️ Редактирование барбера</div>
+                <input type="text" id="barberName" class="input-field" placeholder="Имя">
+                <input type="text" id="barberSpec" class="input-field" placeholder="Специализация, стаж">
+                <input type="text" id="barberAvatar" class="input-field" placeholder="Ссылка на фото (URL) или эмодзи">
+                <input type="number" id="barberRating" class="input-field" placeholder="Рейтинг (например, 4.9)" step="0.1">
+                <input type="number" id="barberReviews" class="input-field" placeholder="Количество отзывов">
+                <textarea id="barberDescription" class="input-field" rows="3" placeholder="Описание, достижения..."></textarea>
+                <div class="flex-between gap-8">
+                    <button id="saveBarberBtn" class="btn" style="flex:1;">💾 Сохранить</button>
+                    <button id="cancelBarberBtn" class="btn btn-secondary" style="flex:1;">Отмена</button>
+                </div></div>
             </div>
         `;
         area.innerHTML = html;
@@ -584,11 +567,9 @@
             clearBarberForm();
             window.editingBarberId = null;
         };
-
         document.getElementById('cancelBarberBtn').onclick = () => {
             document.getElementById('barberFormContainer').classList.add('hidden');
         };
-
         document.getElementById('saveBarberBtn').onclick = async () => {
             const name = document.getElementById('barberName').value.trim();
             const spec = document.getElementById('barberSpec').value.trim();
@@ -596,27 +577,12 @@
             const rating = parseFloat(document.getElementById('barberRating').value) || 4.5;
             const reviews = parseInt(document.getElementById('barberReviews').value) || 0;
             const description = document.getElementById('barberDescription').value.trim();
-
             if (!name) { showToast('Имя обязательно', 'error'); return; }
-
-            const newBarber = {
-                id: window.editingBarberId || name.toLowerCase().replace(/\s/g, '_'),
-                name,
-                spec,
-                avatar,
-                rating,
-                reviews,
-                description
-            };
-
+            const newBarber = { id: window.editingBarberId || name.toLowerCase().replace(/\s/g, '_'), name, spec, avatar, rating, reviews, description };
             if (window.editingBarberId) {
                 const idx = barbersData.findIndex(b => b.id === window.editingBarberId);
-                if (idx !== -1) barbersData[idx] = newBarber;
-                else barbersData.push(newBarber);
-            } else {
-                barbersData.push(newBarber);
-            }
-
+                if (idx !== -1) barbersData[idx] = newBarber; else barbersData.push(newBarber);
+            } else { barbersData.push(newBarber); }
             await callAPI('syncBarbers', { barbers: barbersData });
             localStorage.setItem('barbersData', JSON.stringify(barbersData));
             document.getElementById('barberFormContainer').classList.add('hidden');
@@ -628,10 +594,7 @@
     function renderBarbersList() {
         const container = document.getElementById('barbersList');
         if (!container) return;
-        if (!barbersData.length) {
-            container.innerHTML = '<div class="text-muted">Нет барберов</div>';
-            return;
-        }
+        if (!barbersData.length) { container.innerHTML = '<div class="text-muted">Нет барберов</div>'; return; }
         let html = '';
         barbersData.forEach(b => {
             const isImage = b.avatar && (b.avatar.startsWith('http') || b.avatar.startsWith('data:image'));
@@ -639,14 +602,8 @@
                 <div class="barber-item">
                     <div class="flex-between">
                         <div style="display:flex; align-items:center; gap:12px;">
-                            <div class="barber-avatar">
-                                ${isImage ? `<img src="${b.avatar}" alt="${b.name}">` : `<span class="barber-avatar-placeholder">${b.avatar || '✂️'}</span>`}
-                            </div>
-                            <div>
-                                <strong>${b.name}</strong>
-                                <div class="text-muted">${b.spec}</div>
-                                <div class="text-muted">⭐ ${b.rating} (${b.reviews} отзывов)</div>
-                            </div>
+                            <div class="barber-avatar">${isImage ? `<img src="${b.avatar}" alt="${b.name}">` : `<span style="font-size:28px;">${b.avatar || '✂️'}</span>`}</div>
+                            <div><strong>${b.name}</strong><div class="text-muted">${b.spec}</div><div class="text-muted">⭐ ${b.rating} (${b.reviews} отзывов)</div></div>
                         </div>
                         <div class="flex-between" style="gap:8px;">
                             <button class="edit-barber-btn btn btn-secondary btn-sm" data-id="${b.id}">✎</button>
@@ -658,7 +615,6 @@
             `;
         });
         container.innerHTML = html;
-
         document.querySelectorAll('.edit-barber-btn').forEach(btn => {
             btn.onclick = () => {
                 const id = btn.dataset.id;
@@ -675,7 +631,6 @@
                 window.editingBarberId = barber.id;
             };
         });
-
         document.querySelectorAll('.delete-barber-btn').forEach(btn => {
             btn.onclick = async () => {
                 const id = btn.dataset.id;
@@ -690,14 +645,13 @@
     }
 
     function clearBarberForm() {
-        ['barberName','barberSpec','barberAvatar','barberRating','barberReviews','barberDescription'].forEach(id => {
-            document.getElementById(id).value = '';
-        });
+        ['barberName','barberSpec','barberAvatar','barberRating','barberReviews','barberDescription'].forEach(id => document.getElementById(id).value = '');
     }
 
-    // ---------- УСЛУГИ (CRUD) ----------
+    // ============================================================
+    // 7. УСЛУГИ
+    // ============================================================
     let servicesData = [];
-
     async function showServices(area) {
         const data = await callAPI('getServices');
         servicesData = data.services || [
@@ -709,22 +663,17 @@
         localStorage.setItem('servicesData', JSON.stringify(servicesData));
 
         let html = `
-            <div class="card">
-                <div class="card-title">💇 Список услуг</div>
-                <div id="servicesList"></div>
-                <button id="addServiceBtn" class="btn btn-secondary mt-16">➕ Добавить услугу</button>
-            </div>
+            <div class="card"><div class="card-title">💇 Список услуг</div><div id="servicesList"></div>
+            <button id="addServiceBtn" class="btn btn-secondary mt-16">➕ Добавить услугу</button></div>
             <div id="serviceFormContainer" class="hidden">
-                <div class="card">
-                    <div class="card-title" id="serviceFormTitle">✏️ Редактирование услуги</div>
-                    <input type="text" id="serviceName" class="input-field" placeholder="Название услуги">
-                    <input type="number" id="servicePrice" class="input-field" placeholder="Цена (₽)">
-                    <input type="number" id="serviceDuration" class="input-field" placeholder="Длительность (мин)">
-                    <div class="flex-between gap-8">
-                        <button id="saveServiceBtn" class="btn" style="flex:1;">💾 Сохранить</button>
-                        <button id="cancelServiceBtn" class="btn btn-secondary" style="flex:1;">Отмена</button>
-                    </div>
-                </div>
+                <div class="card"><div class="card-title" id="serviceFormTitle">✏️ Редактирование услуги</div>
+                <input type="text" id="serviceName" class="input-field" placeholder="Название услуги">
+                <input type="number" id="servicePrice" class="input-field" placeholder="Цена (₽)">
+                <input type="number" id="serviceDuration" class="input-field" placeholder="Длительность (мин)">
+                <div class="flex-between gap-8">
+                    <button id="saveServiceBtn" class="btn" style="flex:1;">💾 Сохранить</button>
+                    <button id="cancelServiceBtn" class="btn btn-secondary" style="flex:1;">Отмена</button>
+                </div></div>
             </div>
         `;
         area.innerHTML = html;
@@ -736,36 +685,19 @@
             clearServiceForm();
             window.editingServiceId = null;
         };
-
         document.getElementById('cancelServiceBtn').onclick = () => {
             document.getElementById('serviceFormContainer').classList.add('hidden');
         };
-
         document.getElementById('saveServiceBtn').onclick = async () => {
             const name = document.getElementById('serviceName').value.trim();
             const price = parseInt(document.getElementById('servicePrice').value);
             const duration = parseInt(document.getElementById('serviceDuration').value);
-
-            if (!name || isNaN(price) || isNaN(duration)) {
-                showToast('Заполните все поля', 'error');
-                return;
-            }
-
-            const newService = {
-                id: window.editingServiceId || Date.now(),
-                name,
-                price,
-                duration
-            };
-
+            if (!name || isNaN(price) || isNaN(duration)) { showToast('Заполните все поля', 'error'); return; }
+            const newService = { id: window.editingServiceId || Date.now(), name, price, duration };
             if (window.editingServiceId) {
                 const idx = servicesData.findIndex(s => s.id === window.editingServiceId);
-                if (idx !== -1) servicesData[idx] = newService;
-                else servicesData.push(newService);
-            } else {
-                servicesData.push(newService);
-            }
-
+                if (idx !== -1) servicesData[idx] = newService; else servicesData.push(newService);
+            } else { servicesData.push(newService); }
             await callAPI('syncServices', { services: servicesData });
             localStorage.setItem('servicesData', JSON.stringify(servicesData));
             document.getElementById('serviceFormContainer').classList.add('hidden');
@@ -777,19 +709,13 @@
     function renderServicesList() {
         const container = document.getElementById('servicesList');
         if (!container) return;
-        if (!servicesData.length) {
-            container.innerHTML = '<div class="text-muted">Нет услуг</div>';
-            return;
-        }
+        if (!servicesData.length) { container.innerHTML = '<div class="text-muted">Нет услуг</div>'; return; }
         let html = '';
         servicesData.forEach(s => {
             html += `
                 <div class="service-item-crud">
                     <div class="flex-between">
-                        <div>
-                            <strong>${s.name}</strong>
-                            <div class="text-muted">${s.duration} мин — ${s.price} ₽</div>
-                        </div>
+                        <div><strong>${s.name}</strong><div class="text-muted">${s.duration} мин — ${s.price} ₽</div></div>
                         <div class="flex-between" style="gap:8px;">
                             <button class="edit-service-btn btn btn-secondary btn-sm" data-id="${s.id}">✎</button>
                             <button class="delete-service-btn btn btn-danger btn-sm" data-id="${s.id}">✕</button>
@@ -799,7 +725,6 @@
             `;
         });
         container.innerHTML = html;
-
         document.querySelectorAll('.edit-service-btn').forEach(btn => {
             btn.onclick = () => {
                 const id = btn.dataset.id;
@@ -813,7 +738,6 @@
                 window.editingServiceId = service.id;
             };
         });
-
         document.querySelectorAll('.delete-service-btn').forEach(btn => {
             btn.onclick = async () => {
                 const id = btn.dataset.id;
@@ -828,42 +752,34 @@
     }
 
     function clearServiceForm() {
-        ['serviceName','servicePrice','serviceDuration'].forEach(id => {
-            document.getElementById(id).value = '';
-        });
+        ['serviceName','servicePrice','serviceDuration'].forEach(id => document.getElementById(id).value = '');
     }
 
-    // ---------- СЛОТЫ (автозагрузка, индикатор сохранения) ----------
+    // ============================================================
+    // 8. СЛОТЫ
+    // ============================================================
     async function showSlotsManager(area) {
         const barbersRes = await callAPI('getBarbers');
         const masters = (barbersRes.barbers || []).map(b => b.name);
         const today = new Date().toISOString().split('T')[0];
 
         area.innerHTML = `
-            <div class="card">
-                <div class="card-title">👨‍🦰 Мастер</div>
-                <select id="slotMaster" class="input-field">${masters.map(m => `<option value="${m}">${m}</option>`).join('')}</select>
-            </div>
-            <div class="card">
-                <div class="card-title">📅 Дата</div>
-                <input type="date" id="slotDate" class="input-field" value="${today}">
-            </div>
+            <div class="card"><div class="card-title">👨‍🦰 Мастер</div>
+            <select id="slotMaster" class="input-field">${masters.map(m => `<option value="${m}">${m}</option>`).join('')}</select></div>
+            <div class="card"><div class="card-title">📅 Дата</div>
+            <input type="date" id="slotDate" class="input-field" value="${today}"></div>
             <div id="slotsEditor">
-                <div class="card">
-                    <div class="card-title">⏰ Нажмите на слот, чтобы закрыть/открыть</div>
-                    <div id="slotsList" class="time-slots">Выберите мастера и дату</div>
-                </div>
+                <div class="card"><div class="card-title">⏰ Нажмите на слот, чтобы закрыть/открыть</div>
+                <div id="slotsList" class="time-slots">Выберите мастера и дату</div></div>
                 <button id="saveSlotsBtn" class="btn">💾 Сохранить слоты</button>
                 <div id="slotsStatus" class="text-muted mt-16"></div>
             </div>
         `;
 
-        // Автоматическая загрузка при изменении мастера или даты
         async function loadSlots() {
             const master = document.getElementById('slotMaster').value;
             const date = document.getElementById('slotDate').value;
             if (!master || !date) return;
-
             const data = await callAPI('getClosedSlots', { date, master });
             const closed = data.slots || [];
             const allSlots = ['10:00','11:00','12:00','13:00','14:00','15:00','16:00','17:00','18:00','19:00'];
@@ -915,25 +831,25 @@
         };
     }
 
-    // ---------- СТАТИСТИКА ----------
+    // ============================================================
+    // 9. СТАТИСТИКА
+    // ============================================================
     async function showStats(area) {
         area.innerHTML = '<div class="text-muted">Загрузка...</div>';
         const stats = await callAPI('getStats');
-        const total = stats.total || 0;
-        const revenue = stats.revenue || 0;
-        const clients = stats.totalClients || 0;
-        const top = stats.topService || {};
         area.innerHTML = `
             <div class="stats-grid">
-                <div class="stat-card"><div class="stat-number">${total}</div><div class="stat-label">Всего записей</div></div>
-                <div class="stat-card"><div class="stat-number">${revenue} ₽</div><div class="stat-label">Выручка</div></div>
-                <div class="stat-card"><div class="stat-number">${clients}</div><div class="stat-label">Клиентов</div></div>
-                <div class="stat-card"><div class="stat-number">${top.name || '—'}</div><div class="stat-label">Топ услуга</div></div>
+                <div class="stat-card"><div class="stat-number">${stats.total || 0}</div><div class="stat-label">Всего записей</div></div>
+                <div class="stat-card"><div class="stat-number">${stats.revenue || 0} ₽</div><div class="stat-label">Выручка</div></div>
+                <div class="stat-card"><div class="stat-number">${stats.totalClients || 0}</div><div class="stat-label">Клиентов</div></div>
+                <div class="stat-card"><div class="stat-number">${stats.topService?.name || '—'}</div><div class="stat-label">Топ услуга</div></div>
             </div>
         `;
     }
 
-    // ---------- ВЫХОД ----------
+    // ============================================================
+    // ВЫХОД
+    // ============================================================
     const logoutBtn = document.createElement('button');
     logoutBtn.className = 'btn btn-secondary mt-16';
     logoutBtn.textContent = '🚪 Выйти из админки';
