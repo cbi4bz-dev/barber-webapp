@@ -3,9 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-    <title>BarberShop — администрирование</title>
+    <title>BarberShop — Администрирование</title>
     <style>
-        /* ----- ТЕМЫ (светлая/тёмная) ----- */
         :root {
             --bg-primary: #ffffff;
             --bg-secondary: #f5f5f7;
@@ -20,8 +19,9 @@
             --gold-light: #d4af6a;
             --shadow: 0 4px 12px rgba(0, 0, 0, 0.04);
             --radius: 8px;
+            --danger: #b00020;
+            --success: #2e7d32;
         }
-
         body.dark {
             --bg-primary: #0b0b0f;
             --bg-secondary: #13131a;
@@ -35,259 +35,56 @@
             --gold: #d4af6a;
             --gold-light: #e6c88a;
             --shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+            --danger: #ff6b6b;
+            --success: #6bcf7b;
         }
-
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
+        * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
             background: var(--bg-primary);
             color: var(--text-primary);
             font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
             transition: background 0.2s, color 0.2s;
-            padding-bottom: 60px;
+            padding-bottom: 40px;
         }
-
-        .container {
-            max-width: 720px;
-            margin: 0 auto;
-            padding: 24px 20px;
-        }
-
-        h1 {
-            font-size: 28px;
-            font-weight: 500;
-            letter-spacing: -0.3px;
-            color: var(--text-primary);
-        }
-
-        .headline {
-            font-size: 15px;
-            color: var(--text-secondary);
-            margin-top: 4px;
-            border-left: 3px solid var(--gold);
-            padding-left: 12px;
-        }
-
-        .theme-switch {
-            display: flex;
-            justify-content: flex-end;
-            margin-bottom: 20px;
-        }
-        .theme-btn {
-            background: transparent;
-            border: 1px solid var(--border);
-            padding: 6px 12px;
-            border-radius: var(--radius);
-            cursor: pointer;
-            font-size: 14px;
-            color: var(--text-primary);
-        }
-
-        .card {
-            background: var(--surface);
-            border: 1px solid var(--border);
-            border-radius: var(--radius);
-            padding: 24px;
-            margin-bottom: 20px;
-            box-shadow: var(--shadow);
-        }
-
-        .card-title {
-            font-size: 18px;
-            font-weight: 500;
-            margin-bottom: 20px;
-            color: var(--text-primary);
-            letter-spacing: -0.2px;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .tabs {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 8px;
-            margin-bottom: 20px;
-        }
-        .tab {
-            background: transparent;
-            border: 1px solid var(--border);
-            color: var(--text-secondary);
-            padding: 8px 18px;
-            border-radius: var(--radius);
-            cursor: pointer;
-            font-weight: 500;
-            transition: 0.1s;
-        }
-        .tab.active {
-            background: var(--gold);
-            border-color: var(--gold);
-            color: #1c1c1e;
-        }
-
-        .booking-item {
-            background: var(--surface-elevated);
-            border: 1px solid var(--border);
-            border-radius: var(--radius);
-            padding: 16px;
-            margin-bottom: 12px;
-        }
-
-        .booking-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 8px;
-        }
-        .booking-time {
-            font-weight: 500;
-            color: var(--gold);
-        }
-
-        .booking-cancel {
-            background: transparent;
-            border: 1px solid #b00020;
-            color: #b00020;
-            padding: 4px 12px;
-            border-radius: var(--radius);
-            cursor: pointer;
-        }
-        body.dark .booking-cancel {
-            border-color: #ff6b6b;
-            color: #ff6b6b;
-        }
-
-        .client-item {
-            background: var(--surface-elevated);
-            border: 1px solid var(--border);
-            border-radius: var(--radius);
-            padding: 16px;
-            margin-bottom: 10px;
-            cursor: pointer;
-        }
-        .client-item:hover {
-            border-color: var(--gold);
-        }
-
-        .stats-grid {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 16px;
-        }
-        .stat-card {
-            background: var(--surface-elevated);
-            border: 1px solid var(--border);
-            border-radius: var(--radius);
-            padding: 20px;
-            text-align: center;
-        }
-        .stat-number {
-            font-size: 32px;
-            font-weight: 500;
-            color: var(--gold);
-        }
-        .stat-label {
-            font-size: 14px;
-            color: var(--text-secondary);
-            margin-top: 4px;
-        }
-
-        .time-slots {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 10px;
-            margin: 12px 0;
-        }
-        .time-slot {
-            background: var(--surface-elevated);
-            border: 1px solid var(--border);
-            border-radius: var(--radius);
-            padding: 8px 16px;
-            cursor: pointer;
-            font-weight: 500;
-        }
-        .time-slot.closed {
-            background: #b00020;
-            color: white;
-            border-color: #b00020;
-            text-decoration: line-through;
-        }
-        body.dark .time-slot.closed {
-            background: #661a1a;
-            border-color: #661a1a;
-        }
-
-        .input-field {
-            width: 100%;
-            padding: 12px 16px;
-            background: var(--surface-elevated);
-            border: 1px solid var(--border);
-            border-radius: var(--radius);
-            color: var(--text-primary);
-            font-size: 15px;
-            margin-bottom: 16px;
-        }
-        select.input-field {
-            appearance: auto;
-        }
-
-        .btn {
-            padding: 12px 20px;
-            background: var(--accent);
-            color: #fff;
-            border: none;
-            border-radius: var(--radius);
-            font-weight: 500;
-            font-size: 15px;
-            cursor: pointer;
-            transition: 0.2s;
-            width: 100%;
-        }
+        .container { max-width: 720px; margin: 0 auto; padding: 24px 20px; }
+        h1 { font-size: 28px; font-weight: 500; letter-spacing: -0.3px; color: var(--text-primary); }
+        .headline { font-size: 15px; color: var(--text-secondary); margin-top: 4px; border-left: 3px solid var(--gold); padding-left: 12px; }
+        .theme-switch { display: flex; justify-content: flex-end; margin-bottom: 20px; }
+        .theme-btn { background: transparent; border: 1px solid var(--border); padding: 6px 12px; border-radius: var(--radius); cursor: pointer; font-size: 14px; color: var(--text-primary); }
+        .card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 24px; margin-bottom: 20px; box-shadow: var(--shadow); }
+        .card-title { font-size: 18px; font-weight: 500; margin-bottom: 20px; color: var(--text-primary); letter-spacing: -0.2px; display: flex; align-items: center; gap: 8px; }
+        .tabs { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 20px; }
+        .tab { background: transparent; border: 1px solid var(--border); color: var(--text-secondary); padding: 8px 18px; border-radius: var(--radius); cursor: pointer; font-weight: 500; transition: 0.1s; }
+        .tab.active { background: var(--gold); border-color: var(--gold); color: #1c1c1e; }
+        .booking-item, .barber-item { background: var(--surface-elevated); border: 1px solid var(--border); border-radius: var(--radius); padding: 16px; margin-bottom: 12px; }
+        .booking-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
+        .booking-time { font-weight: 500; color: var(--gold); }
+        .btn { padding: 12px 20px; background: var(--accent); color: #fff; border: none; border-radius: var(--radius); font-weight: 500; font-size: 15px; cursor: pointer; transition: 0.2s; width: 100%; }
         .btn:hover { background: var(--accent-hover); }
-        .btn-secondary {
-            background: transparent;
-            border: 1px solid var(--border);
-            color: var(--text-primary);
-        }
-        .btn-secondary:hover {
-            background: var(--surface-elevated);
-        }
-
-        .hidden { display: none; }
-        .text-muted { color: var(--text-secondary); font-size: 14px; }
+        .btn-secondary { background: transparent; border: 1px solid var(--border); color: var(--text-primary); }
+        .btn-secondary:hover { background: var(--surface-elevated); }
+        .btn-danger { background: var(--danger); color: white; }
+        .btn-danger:hover { opacity: 0.8; }
+        .input-field { width: 100%; padding: 12px 16px; background: var(--surface-elevated); border: 1px solid var(--border); border-radius: var(--radius); color: var(--text-primary); font-size: 15px; margin-bottom: 16px; }
         .flex-between { display: flex; justify-content: space-between; align-items: center; }
+        .text-muted { color: var(--text-secondary); font-size: 14px; }
+        .hidden { display: none; }
         .mt-16 { margin-top: 16px; }
         .mb-16 { margin-bottom: 16px; }
         .gap-8 { gap: 8px; }
-
-        .back-btn {
-            background: transparent;
-            border: 1px solid var(--border);
-            padding: 6px 14px;
-            border-radius: var(--radius);
-            cursor: pointer;
-            color: var(--text-primary);
-            margin-bottom: 16px;
-        }
-
-        /* login */
-        .login-box {
-            max-width: 360px;
-            margin: 0 auto;
-            text-align: center;
-        }
-        .login-box .input-field {
-            margin-bottom: 16px;
-        }
-
-        /* мобильная адаптация */
-        @media (max-width: 480px) {
-            .stats-grid { grid-template-columns: 1fr 1fr; }
-        }
+        .stats-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; }
+        .stat-card { background: var(--surface-elevated); border: 1px solid var(--border); border-radius: var(--radius); padding: 20px; text-align: center; }
+        .stat-number { font-size: 32px; font-weight: 500; color: var(--gold); }
+        .stat-label { font-size: 14px; color: var(--text-secondary); margin-top: 4px; }
+        .time-slots { display: flex; flex-wrap: wrap; gap: 10px; margin: 12px 0; }
+        .time-slot { background: var(--surface-elevated); border: 1px solid var(--border); border-radius: var(--radius); padding: 8px 16px; cursor: pointer; font-weight: 500; }
+        .time-slot.closed { background: var(--danger); color: white; border-color: var(--danger); text-decoration: line-through; }
+        .back-btn { background: transparent; border: 1px solid var(--border); padding: 6px 14px; border-radius: var(--radius); cursor: pointer; color: var(--text-primary); margin-bottom: 16px; }
+        .login-box { max-width: 360px; margin: 0 auto; text-align: center; }
+        .barber-avatar { width: 56px; height: 56px; border-radius: var(--radius); background: var(--gold-light); display: flex; align-items: center; justify-content: center; font-size: 28px; }
+        .barber-avatar img { width: 100%; height: 100%; object-fit: cover; border-radius: var(--radius); }
+        .edit-barber-form textarea { resize: vertical; }
+        @media (max-width: 480px) { .stats-grid { grid-template-columns: 1fr 1fr; } }
     </style>
 </head>
 <body>
@@ -295,7 +92,6 @@
     <div class="theme-switch">
         <button id="themeToggleBtn" class="theme-btn">🌙 Тёмная тема</button>
     </div>
-
     <h1>✂️ BarberShop</h1>
     <div class="headline">Администрирование</div>
 
@@ -304,15 +100,16 @@
         <div class="card-title">🔐 Вход</div>
         <input type="password" id="adminPassword" class="input-field" placeholder="Пароль">
         <button id="loginBtn" class="btn">Войти</button>
-        <div id="loginError" class="text-muted" style="color:#b00020; margin-top:12px; display:none;">Неверный пароль</div>
+        <div id="loginError" class="text-muted" style="color:var(--danger); margin-top:12px; display:none;">Неверный пароль</div>
     </div>
 
-    <!-- АДМИН-ПАНЕЛЬ -->
+    <!-- АДМИНКА -->
     <div id="adminSection" class="hidden">
         <div class="tabs" id="tabContainer">
             <div class="tab active" data-tab="all">📋 Все записи</div>
             <div class="tab" data-tab="today">📅 Сегодня</div>
             <div class="tab" data-tab="clients">👥 Клиенты</div>
+            <div class="tab" data-tab="barbers">💈 Барберы</div>
             <div class="tab" data-tab="slots">⏰ Слоты</div>
             <div class="tab" data-tab="stats">📊 Статистика</div>
         </div>
@@ -356,10 +153,16 @@
             adminSection.classList.remove('hidden');
             loginError.style.display = 'none';
             loadTab('all');
+            localStorage.setItem('adminLogged', 'true');
         } else {
             loginError.style.display = 'block';
         }
     };
+    if (localStorage.getItem('adminLogged') === 'true') {
+        loginSection.classList.add('hidden');
+        adminSection.classList.remove('hidden');
+        loadTab('all');
+    }
 
     // ПЕРЕКЛЮЧЕНИЕ ВКЛАДОК
     document.querySelectorAll('.tab').forEach(tab => {
@@ -386,6 +189,7 @@
         if (tab === 'all') await showAllBookings(area);
         else if (tab === 'today') await showTodayBookings(area);
         else if (tab === 'clients') await showClients(area);
+        else if (tab === 'barbers') await showBarbers(area);
         else if (tab === 'slots') await showSlotsManager(area);
         else if (tab === 'stats') await showStats(area);
     }
@@ -409,10 +213,13 @@
             html += `<div class="text-muted" style="margin: 12px 0 8px; font-weight:500;">${date}</div>`;
             grouped[date].forEach(b => {
                 html += `
-                    <div class="booking-item">
+                    <div class="booking-item" data-id="${b.booking_id}">
                         <div class="booking-header">
                             <span class="booking-time">${b.time}</span>
-                            <button class="booking-cancel" data-id="${b.booking_id}">Отменить</button>
+                            <div>
+                                <button class="edit-booking-btn btn-secondary" style="margin-right:8px; padding:4px 12px; border:1px solid var(--border); border-radius:var(--radius); background:transparent; cursor:pointer;">✎</button>
+                                <button class="booking-cancel" style="background:transparent; border:1px solid var(--danger); color:var(--danger); padding:4px 12px; border-radius:var(--radius); cursor:pointer;">Отменить</button>
+                            </div>
                         </div>
                         <div><strong>${b.client_name}</strong> — ${b.service}</div>
                         <div>👨‍🦰 ${b.master}</div>
@@ -423,6 +230,7 @@
         });
         area.innerHTML = html;
         attachCancelEvents(area);
+        attachEditEvents(area);
     }
 
     // ----- СЕГОДНЯ -----
@@ -438,10 +246,13 @@
         let html = '';
         bookings.forEach(b => {
             html += `
-                <div class="booking-item">
+                <div class="booking-item" data-id="${b.booking_id}">
                     <div class="booking-header">
                         <span class="booking-time">${b.time}</span>
-                        <button class="booking-cancel" data-id="${b.booking_id}">Отменить</button>
+                        <div>
+                            <button class="edit-booking-btn btn-secondary" style="margin-right:8px; padding:4px 12px; border:1px solid var(--border); border-radius:var(--radius); background:transparent; cursor:pointer;">✎</button>
+                            <button class="booking-cancel" style="background:transparent; border:1px solid var(--danger); color:var(--danger); padding:4px 12px; border-radius:var(--radius); cursor:pointer;">Отменить</button>
+                        </div>
                     </div>
                     <div><strong>${b.client_name}</strong> — ${b.service}</div>
                     <div>👨‍🦰 ${b.master}</div>
@@ -451,6 +262,7 @@
         });
         area.innerHTML = html;
         attachCancelEvents(area);
+        attachEditEvents(area);
     }
 
     // ----- КЛИЕНТЫ -----
@@ -465,7 +277,7 @@
         let html = '';
         clients.forEach(c => {
             html += `
-                <div class="client-item" data-id="${c.client_id}">
+                <div class="client-item" style="background:var(--surface-elevated); border:1px solid var(--border); border-radius:var(--radius); padding:16px; margin-bottom:12px; cursor:pointer;" data-id="${c.client_id}">
                     <div><strong>${c.name || 'Гость'}</strong> ${c.username ? '@'+c.username : ''}</div>
                     <div class="flex-between">
                         <span>📞 ${c.phone || '—'}</span>
@@ -477,7 +289,6 @@
             `;
         });
         area.innerHTML = html;
-        // клик по клиенту — детальная карточка
         document.querySelectorAll('.client-item').forEach(el => {
             el.addEventListener('click', async () => {
                 const clientId = el.dataset.id;
@@ -517,9 +328,175 @@
         area.innerHTML = html;
     }
 
+    // ----- БАРБЕРЫ (CRUD) -----
+    let barbersData = [
+        { id: "alexander", name: "Александр", spec: "Топ-мастер, 7 лет", avatar: "✂️", rating: 4.9, reviews: 128 },
+        { id: "dmitry", name: "Дмитрий", spec: "Борода, 5 лет", avatar: "🧔", rating: 4.8, reviews: 94 },
+        { id: "mikhail", name: "Михаил", spec: "Премиум, 10 лет", avatar: "💈", rating: 4.9, reviews: 156 }
+    ];
+
+    async function showBarbers(area) {
+        let html = `
+            <div class="card">
+                <div class="card-title">💈 Список барберов</div>
+                <div id="barbersList"></div>
+                <button id="addBarberBtn" class="btn btn-secondary mt-16">➕ Добавить барбера</button>
+            </div>
+            <div id="barberFormContainer" class="hidden">
+                <div class="card">
+                    <div class="card-title" id="barberFormTitle">✏️ Редактирование барбера</div>
+                    <input type="text" id="barberName" class="input-field" placeholder="Имя">
+                    <input type="text" id="barberSpec" class="input-field" placeholder="Специализация, стаж">
+                    <input type="text" id="barberAvatar" class="input-field" placeholder="Эмодзи-аватар (например, ✂️)">
+                    <input type="number" id="barberRating" class="input-field" placeholder="Рейтинг (например, 4.9)" step="0.1">
+                    <input type="number" id="barberReviews" class="input-field" placeholder="Количество отзывов">
+                    <textarea id="barberDescription" class="input-field" rows="3" placeholder="Описание, достижения..."></textarea>
+                    <div class="flex-between gap-8">
+                        <button id="saveBarberBtn" class="btn" style="flex:1;">💾 Сохранить</button>
+                        <button id="cancelBarberBtn" class="btn btn-secondary" style="flex:1;">Отмена</button>
+                    </div>
+                </div>
+            </div>
+        `;
+        area.innerHTML = html;
+        renderBarbersList();
+
+        document.getElementById('addBarberBtn').onclick = () => {
+            document.getElementById('barberFormContainer').classList.remove('hidden');
+            document.getElementById('barberFormTitle').textContent = '➕ Новый барбер';
+            clearBarberForm();
+            window.editingBarberId = null;
+        };
+
+        document.getElementById('cancelBarberBtn').onclick = () => {
+            document.getElementById('barberFormContainer').classList.add('hidden');
+        };
+
+        document.getElementById('saveBarberBtn').onclick = async () => {
+            const name = document.getElementById('barberName').value.trim();
+            const spec = document.getElementById('barberSpec').value.trim();
+            const avatar = document.getElementById('barberAvatar').value.trim() || '✂️';
+            const rating = parseFloat(document.getElementById('barberRating').value) || 4.5;
+            const reviews = parseInt(document.getElementById('barberReviews').value) || 0;
+            const desc = document.getElementById('barberDescription').value.trim();
+
+            if (!name) { alert('Имя обязательно'); return; }
+
+            const newBarber = {
+                id: window.editingBarberId || name.toLowerCase().replace(/\s/g, '_'),
+                name,
+                spec,
+                avatar,
+                rating,
+                reviews,
+                description: desc
+            };
+
+            if (window.editingBarberId) {
+                // редактирование
+                const idx = barbersData.findIndex(b => b.id === window.editingBarberId);
+                if (idx !== -1) barbersData[idx] = newBarber;
+                else barbersData.push(newBarber);
+            } else {
+                barbersData.push(newBarber);
+            }
+
+            // Сохраняем в localStorage (имитация БД)
+            localStorage.setItem('barbersData', JSON.stringify(barbersData));
+            document.getElementById('barberFormContainer').classList.add('hidden');
+            renderBarbersList();
+            // Синхронизируем с booking.html через localStorage
+            syncBarbersToBooking();
+        };
+    }
+
+    function renderBarbersList() {
+        // загружаем из localStorage
+        const saved = localStorage.getItem('barbersData');
+        if (saved) barbersData = JSON.parse(saved);
+        const container = document.getElementById('barbersList');
+        if (!container) return;
+        if (!barbersData.length) {
+            container.innerHTML = '<div class="text-muted">Нет барберов</div>';
+            return;
+        }
+        let html = '';
+        barbersData.forEach(b => {
+            html += `
+                <div class="barber-item">
+                    <div class="flex-between">
+                        <div style="display:flex; align-items:center; gap:12px;">
+                            <div class="barber-avatar">${b.avatar}</div>
+                            <div>
+                                <strong>${b.name}</strong>
+                                <div class="text-muted">${b.spec}</div>
+                                <div class="text-muted">⭐ ${b.rating} (${b.reviews} отзывов)</div>
+                            </div>
+                        </div>
+                        <div>
+                            <button class="edit-barber-btn" data-id="${b.id}" style="margin-right:8px; background:transparent; border:1px solid var(--border); border-radius:var(--radius); padding:4px 12px; cursor:pointer;">✎</button>
+                            <button class="delete-barber-btn" data-id="${b.id}" style="background:transparent; border:1px solid var(--danger); color:var(--danger); border-radius:var(--radius); padding:4px 12px; cursor:pointer;">✕</button>
+                        </div>
+                    </div>
+                    ${b.description ? `<div class="text-muted" style="margin-top:8px;">${b.description}</div>` : ''}
+                </div>
+            `;
+        });
+        container.innerHTML = html;
+
+        // редактирование
+        document.querySelectorAll('.edit-barber-btn').forEach(btn => {
+            btn.onclick = () => {
+                const id = btn.dataset.id;
+                const barber = barbersData.find(b => b.id === id);
+                if (!barber) return;
+                document.getElementById('barberFormContainer').classList.remove('hidden');
+                document.getElementById('barberFormTitle').textContent = '✏️ Редактирование барбера';
+                document.getElementById('barberName').value = barber.name;
+                document.getElementById('barberSpec').value = barber.spec;
+                document.getElementById('barberAvatar').value = barber.avatar;
+                document.getElementById('barberRating').value = barber.rating;
+                document.getElementById('barberReviews').value = barber.reviews;
+                document.getElementById('barberDescription').value = barber.description || '';
+                window.editingBarberId = barber.id;
+            };
+        });
+
+        // удаление
+        document.querySelectorAll('.delete-barber-btn').forEach(btn => {
+            btn.onclick = async () => {
+                const id = btn.dataset.id;
+                if (!confirm('Удалить барбера?')) return;
+                barbersData = barbersData.filter(b => b.id !== id);
+                localStorage.setItem('barbersData', JSON.stringify(barbersData));
+                renderBarbersList();
+                syncBarbersToBooking();
+            };
+        });
+    }
+
+    function clearBarberForm() {
+        document.getElementById('barberName').value = '';
+        document.getElementById('barberSpec').value = '';
+        document.getElementById('barberAvatar').value = '';
+        document.getElementById('barberRating').value = '';
+        document.getElementById('barberReviews').value = '';
+        document.getElementById('barberDescription').value = '';
+    }
+
+    function syncBarbersToBooking() {
+        // Сохраняем в localStorage для booking.html
+        localStorage.setItem('barbersData', JSON.stringify(barbersData));
+        // Также можно отправить в API для постоянного хранения
+        callAPI('syncBarbers', { barbers: barbersData }).catch(() => {});
+    }
+
     // ----- УПРАВЛЕНИЕ СЛОТАМИ -----
     async function showSlotsManager(area) {
-        const masters = ['Алексей', 'Дмитрий', 'Михаил'];
+        // Загружаем мастеров из barbersData
+        const saved = localStorage.getItem('barbersData');
+        if (saved) barbersData = JSON.parse(saved);
+        const masters = barbersData.map(b => b.name);
         const today = new Date().toISOString().split('T')[0];
         area.innerHTML = `
             <div class="card">
@@ -580,6 +557,10 @@
             });
             const msg = document.getElementById('slotsMessage');
             msg.textContent = result.success ? '✅ Слоты сохранены' : '❌ Ошибка сохранения';
+            if (result.success) {
+                // Синхронизируем с booking.html
+                localStorage.setItem('slotsSync', JSON.stringify({ date: window._currentDate, master: window._currentMaster, slots: window._currentClosed }));
+            }
         };
     }
 
@@ -606,42 +587,107 @@
         container.querySelectorAll('.booking-cancel').forEach(btn => {
             btn.onclick = async () => {
                 if (!confirm('Отменить запись?')) return;
-                const id = btn.dataset.id;
+                const id = btn.closest('.booking-item').dataset.id;
                 await callAPI('cancelBooking', { bookingId: id });
-                // перезагрузить текущую вкладку
                 const activeTab = document.querySelector('.tab.active').dataset.tab;
                 loadTab(activeTab);
             };
         });
     }
 
-    // Через Telegram WebApp
-    const tg = window.Telegram.WebApp;
-    if (tg) { tg.expand(); tg.ready(); }
-
-    // При загрузке проверить, не был ли уже админ залогинен (по localStorage)
-    if (localStorage.getItem('adminLogged') === 'true') {
-        loginSection.classList.add('hidden');
-        adminSection.classList.remove('hidden');
-        loadTab('all');
+    // ----- РЕДАКТИРОВАНИЕ ЗАПИСИ -----
+    function attachEditEvents(container) {
+        container.querySelectorAll('.edit-booking-btn').forEach(btn => {
+            btn.onclick = () => {
+                const item = btn.closest('.booking-item');
+                const id = item.dataset.id;
+                showEditBookingForm(id);
+            };
+        });
     }
 
-    // запомнить вход
-    loginBtn.addEventListener('click', () => {
-        if (adminPassword.value === ADMIN_PASSWORD) {
-            localStorage.setItem('adminLogged', 'true');
+    async function showEditBookingForm(bookingId) {
+        const all = await callAPI('getAllBookings');
+        const booking = all.bookings.find(b => b.booking_id === bookingId);
+        if (!booking) { alert('Запись не найдена'); return; }
+
+        const area = document.getElementById('contentArea');
+        const masters = barbersData.map(b => b.name);
+        const services = ['Мужская стрижка', 'Стрижка + борода', 'Королевское бритьё', 'Детская стрижка'];
+        const allSlots = ['10:00','11:00','12:00','13:00','14:00','15:00','16:00','17:00','18:00','19:00'];
+
+        area.innerHTML = `
+            <button class="back-btn" onclick="loadTab('all')">← Назад к записям</button>
+            <div class="card">
+                <div class="card-title">✏️ Редактирование записи</div>
+                <div class="text-muted" style="margin-bottom:16px;">Клиент: <strong>${booking.client_name}</strong></div>
+                <select id="editMaster" class="input-field">${masters.map(m => `<option value="${m}" ${m === booking.master ? 'selected' : ''}>${m}</option>`).join('')}</select>
+                <select id="editService" class="input-field">${services.map(s => `<option value="${s}" ${s === booking.service ? 'selected' : ''}>${s}</option>`).join('')}</select>
+                <input type="date" id="editDate" class="input-field" value="${booking.date}">
+                <select id="editTime" class="input-field">${allSlots.map(t => `<option value="${t}" ${t === booking.time ? 'selected' : ''}>${t}</option>`).join('')}</select>
+                <div class="flex-between gap-8">
+                    <button id="saveEditBookingBtn" class="btn" style="flex:1;">💾 Сохранить изменения</button>
+                    <button id="cancelEditBookingBtn" class="btn btn-secondary" style="flex:1;">Отмена</button>
+                </div>
+            </div>
+        `;
+
+        document.getElementById('saveEditBookingBtn').onclick = async () => {
+            const newMaster = document.getElementById('editMaster').value;
+            const newService = document.getElementById('editService').value;
+            const newDate = document.getElementById('editDate').value;
+            const newTime = document.getElementById('editTime').value;
+
+            // Проверка на конфликт слотов
+            const slotsData = await callAPI('getFreeSlots', { date: newDate, masterId: newMaster });
+            const freeSlots = slotsData.slots || [];
+            if (!freeSlots.includes(newTime) && (newDate !== booking.date || newMaster !== booking.master)) {
+                if (!confirm('Этот слот занят или закрыт. Всё равно сохранить?')) return;
+            }
+
+            // Обновляем запись
+            const updatedBooking = { ...booking, master: newMaster, service: newService, date: newDate, time: newTime };
+            // Сохраняем через API
+            await callAPI('updateBooking', { booking: updatedBooking });
+            alert('✅ Запись обновлена');
+            loadTab('all');
+        };
+
+        document.getElementById('cancelEditBookingBtn').onclick = () => loadTab('all');
+    }
+
+    // ---------- ИНИЦИАЛИЗАЦИЯ ----------
+    // Загружаем барберов из localStorage при старте
+    const savedBarbers = localStorage.getItem('barbersData');
+    if (savedBarbers) barbersData = JSON.parse(savedBarbers);
+
+    // Синхронизация слотов с booking.html
+    window.addEventListener('storage', (e) => {
+        if (e.key === 'slotsSync') {
+            // booking.html подхватит изменения
         }
     });
 
-    // кнопка "выйти" (добавим в интерфейс)
+    // Кнопка выхода
     const logoutBtn = document.createElement('button');
     logoutBtn.className = 'btn btn-secondary mt-16';
     logoutBtn.textContent = '🚪 Выйти из админки';
     logoutBtn.onclick = () => {
         localStorage.removeItem('adminLogged');
+        localStorage.removeItem('barbersData');
         location.reload();
     };
     document.getElementById('adminSection').appendChild(logoutBtn);
+
+    // Для совместимости с booking.html – синхронизация через localStorage
+    function syncAllData() {
+        localStorage.setItem('barbersData', JSON.stringify(barbersData));
+        // Отправляем в API для постоянного хранения
+        callAPI('syncBarbers', { barbers: barbersData }).catch(() => {});
+    }
+
+    // Периодическая синхронизация (каждые 30 секунд)
+    setInterval(syncAllData, 30000);
 </script>
 </body>
 </html>
