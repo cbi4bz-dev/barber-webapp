@@ -3,614 +3,502 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-    <title>BarberShop | премиальная запись</title>
+    <title>Запись в барбершоп</title>
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
-        /* ----- ТЕМЫ ----- */
-        :root {
-            --bg-primary: #ffffff;
-            --bg-secondary: #f5f5f7;
-            --surface: #ffffff;
-            --surface-elevated: #fafafc;
-            --border: #e0e0e4;
-            --text-primary: #1c1c1e;
-            --text-secondary: #6c6c70;
-            --accent: #1a1a1a;
-            --accent-hover: #2c2c2e;
-            --gold: #b48c48;
-            --gold-light: #d4af6a;
-            --shadow: 0 4px 12px rgba(0, 0, 0, 0.04);
-            --radius: 8px;
-        }
-
-        body.dark {
-            --bg-primary: #0b0b0f;
-            --bg-secondary: #13131a;
-            --surface: #18181f;
-            --surface-elevated: #1f1f28;
-            --border: #2c2c35;
-            --text-primary: #efeff1;
-            --text-secondary: #a0a0b0;
-            --accent: #ffffff;
-            --accent-hover: #e6e6e6;
-            --gold: #d4af6a;
-            --gold-light: #e6c88a;
-            --shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
-        }
-
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
-            background: var(--bg-primary);
-            color: var(--text-primary);
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            transition: background 0.2s, color 0.2s;
-            padding-bottom: 84px;
+            font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+            background: var(--tg-theme-bg-color);
+            color: var(--tg-theme-text-color);
+            padding: 20px;
+            transition: background 0.2s ease;
         }
-
-        .container { max-width: 640px; margin: 0 auto; padding: 24px 20px; }
-        h1 { font-size: 28px; font-weight: 500; letter-spacing: -0.3px; color: var(--text-primary); }
-        .headline { font-size: 15px; color: var(--text-secondary); margin-top: 4px; border-left: 3px solid var(--gold); padding-left: 12px; }
-        .theme-switch { display: flex; justify-content: flex-end; margin-bottom: 20px; }
-        .theme-btn { background: transparent; border: 1px solid var(--border); padding: 6px 12px; border-radius: var(--radius); cursor: pointer; font-size: 14px; color: var(--text-primary); }
-
-        .card {
-            background: var(--surface);
-            border: 1px solid var(--border);
-            border-radius: var(--radius);
-            padding: 24px;
-            margin-bottom: 20px;
-            box-shadow: var(--shadow);
-        }
-        .card-title { font-size: 18px; font-weight: 500; margin-bottom: 20px; display: flex; align-items: center; gap: 8px; color: var(--text-primary); }
-
-        /* мастера — горизонтальный скролл */
-        .masters-scroll {
+        
+        /* Progress Bar */
+        .progress {
             display: flex;
-            overflow-x: auto;
-            gap: 16px;
-            padding-bottom: 8px;
-            scrollbar-width: thin;
+            justify-content: space-between;
+            margin-bottom: 24px;
+            gap: 4px;
         }
-        .master-card {
-            flex: 0 0 180px;
-            background: var(--surface-elevated);
-            border: 1px solid var(--border);
-            border-radius: var(--radius);
+        .progress-step {
+            flex: 1;
+            height: 4px;
+            background: var(--tg-theme-hint-color);
+            border-radius: 4px;
+            transition: background 0.3s ease;
+            opacity: 0.3;
+        }
+        .progress-step.active {
+            background: var(--tg-theme-button-color);
+            opacity: 1;
+        }
+        .progress-step.done {
+            background: var(--tg-theme-button-color);
+            opacity: 0.5;
+        }
+
+        h2 {
+            font-size: 22px;
+            margin-bottom: 8px;
+            font-weight: 700;
+        }
+        .subtitle {
+            color: var(--tg-theme-hint-color);
+            font-size: 14px;
+            margin-bottom: 20px;
+        }
+
+        /* Карточки-опции */
+        .option-card {
+            background: var(--tg-theme-secondary-bg-color);
+            border: 2px solid transparent;
+            border-radius: 16px;
+            padding: 16px 18px;
+            margin-bottom: 10px;
+            width: 100%;
+            text-align: left;
+            font-size: 16px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .option-card:active { transform: scale(0.98); }
+        .option-card.selected {
+            border-color: var(--tg-theme-button-color);
+            background: var(--tg-theme-bg-color);
+        }
+        .option-card .price {
+            font-weight: 700;
+            color: var(--tg-theme-button-color);
+        }
+        .option-card .arrow {
+            font-size: 18px;
+            color: var(--tg-theme-hint-color);
+        }
+
+        /* Сетка для дат и времени */
+        .grid-4 {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 10px;
+            margin: 16px 0;
+        }
+        .grid-3 {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            margin: 16px 0;
+        }
+        .grid-item {
+            background: var(--tg-theme-secondary-bg-color);
+            border: 2px solid transparent;
+            border-radius: 14px;
+            padding: 14px 8px;
+            text-align: center;
+            font-size: 15px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        .grid-item:active { transform: scale(0.95); }
+        .grid-item.selected {
+            border-color: var(--tg-theme-button-color);
+            background: var(--tg-theme-bg-color);
+        }
+        .grid-item .day {
+            font-size: 12px;
+            opacity: 0.7;
+        }
+
+        /* Кнопки навигации */
+        .nav-buttons {
+            display: flex;
+            gap: 12px;
+            margin-top: 24px;
+        }
+        .btn-primary {
+            flex: 1;
+            background: var(--tg-theme-button-color);
+            color: var(--tg-theme-button-text-color);
+            border: none;
+            border-radius: 14px;
+            padding: 14px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        .btn-primary:active { transform: scale(0.98); opacity: 0.8; }
+        .btn-primary:disabled {
+            opacity: 0.4;
+            cursor: not-allowed;
+        }
+        .btn-secondary {
+            flex: 0.5;
+            background: transparent;
+            color: var(--tg-theme-text-color);
+            border: 1px solid var(--tg-theme-hint-color);
+            border-radius: 14px;
+            padding: 14px;
+            font-size: 16px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        .btn-secondary:active { transform: scale(0.98); }
+
+        /* Инпут */
+        input {
+            width: 100%;
             padding: 16px;
-            cursor: pointer;
-            transition: all 0.2s;
+            border: 2px solid var(--tg-theme-hint-color);
+            border-radius: 14px;
+            font-size: 16px;
+            background: var(--tg-theme-bg-color);
+            color: var(--tg-theme-text-color);
+            box-sizing: border-box;
+            margin: 12px 0;
         }
-        .master-card.selected {
-            border-color: var(--gold);
-            background: var(--gold-light);
-            color: #1c1c1e;
+        input:focus {
+            outline: none;
+            border-color: var(--tg-theme-button-color);
         }
-        .master-avatar { font-size: 44px; margin-bottom: 10px; }
-        .master-name { font-weight: 600; font-size: 16px; }
-        .rating { display: flex; align-items: center; gap: 6px; margin-top: 8px; font-size: 13px; }
-        .stars { color: var(--gold); letter-spacing: 2px; }
 
-        /* услуги */
-        .services-list { display: flex; flex-direction: column; gap: 10px; }
-        .service-item {
-            display: flex; justify-content: space-between; align-items: center;
-            padding: 14px 16px;
-            background: var(--surface-elevated);
-            border: 1px solid var(--border);
-            border-radius: var(--radius);
-            cursor: pointer;
-            transition: all 0.1s;
+        /* Экраны */
+        .screen {
+            display: none;
+            animation: slideIn 0.3s ease;
         }
-        .service-item.selected { border-color: var(--gold); background: var(--gold-light); color: #1c1c1e; }
-        .service-left { display: flex; flex-direction: column; gap: 4px; }
-        .service-name { font-weight: 500; }
-        .service-duration { font-size: 13px; color: var(--text-secondary); }
-        .service-price { font-weight: 600; font-size: 18px; }
-
-        /* календарь */
-        .calendar-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
-        .month-selector { background: transparent; border: 1px solid var(--border); color: var(--text-primary); padding: 6px 12px; border-radius: var(--radius); cursor: pointer; font-weight: 500; }
-        .weekdays { display: grid; grid-template-columns: repeat(7, 1fr); text-align: center; font-size: 13px; font-weight: 500; color: var(--text-secondary); margin-bottom: 12px; }
-        .calendar-days { display: grid; grid-template-columns: repeat(7, 1fr); gap: 8px; }
-        .day-cell {
-            aspect-ratio: 1; display: flex; align-items: center; justify-content: center;
-            background: var(--surface-elevated); border-radius: var(--radius); font-weight: 500;
-            cursor: pointer; transition: 0.1s; border: 1px solid var(--border);
-        }
-        .day-cell.selected { background: var(--gold); color: #1c1c1e; border-color: var(--gold); }
-        .day-cell.disabled { opacity: 0.3; cursor: not-allowed; }
-        .day-cell.available { background: var(--gold-light); color: #1c1c1e; }
-
-        /* слоты времени */
-        .time-slots { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 8px; }
-        .time-slot {
-            background: var(--surface-elevated); border: 1px solid var(--border);
-            padding: 8px 20px; border-radius: var(--radius);
-            font-weight: 500; cursor: pointer;
-        }
-        .time-slot.selected { background: var(--gold); border-color: var(--gold); color: #1c1c1e; }
-
-        /* поля ввода */
-        .input-field {
-            width: 100%; padding: 12px 16px;
-            background: var(--surface-elevated); border: 1px solid var(--border);
-            border-radius: var(--radius); color: var(--text-primary);
-            font-size: 15px; margin-bottom: 16px;
-        }
-        textarea.input-field { resize: vertical; }
-
-        /* итог */
-        .summary-card { background: var(--surface-elevated); border: 1px solid var(--border); border-radius: var(--radius); padding: 20px; margin: 20px 0; }
-        .summary-row { display: flex; justify-content: space-between; margin-bottom: 12px; font-size: 15px; }
-
-        /* кнопки */
-        .btn {
-            width: 100%; padding: 14px;
-            background: var(--accent); color: white;
-            border: none; border-radius: var(--radius);
-            font-weight: 600; font-size: 16px;
-            cursor: pointer; transition: 0.2s;
-        }
-        .btn:hover { background: var(--accent-hover); }
-        .btn-secondary { background: transparent; border: 1px solid var(--border); color: var(--text-primary); }
-        .btn-secondary:hover { background: var(--surface-elevated); }
-
-        /* нижнее меню */
-        .bottom-nav {
-            position: fixed; bottom: 0; left: 0; right: 0;
-            background: var(--surface); border-top: 1px solid var(--border);
-            display: flex; justify-content: space-around;
-            padding: 12px 20px 24px; backdrop-filter: blur(12px);
-        }
-        .nav-item {
-            display: flex; flex-direction: column; align-items: center; gap: 4px;
-            font-size: 12px; color: var(--text-secondary); cursor: pointer;
-        }
-        .nav-item.active { color: var(--gold); }
-        .nav-icon { font-size: 22px; }
-
-        .screen { display: none; }
         .screen.active { display: block; }
-
-        .booking-card {
-            background: var(--surface-elevated); border: 1px solid var(--border);
-            border-radius: var(--radius); padding: 16px; margin-bottom: 12px;
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateX(20px); }
+            to { opacity: 1; transform: translateX(0); }
         }
-        .progress-bar { background: var(--surface-elevated); border-radius: 4px; height: 6px; overflow: hidden; margin: 12px 0; }
-        .progress-fill { background: var(--gold); height: 100%; width: 0%; }
-        .flex-between { display: flex; justify-content: space-between; align-items: center; }
-        .text-muted { color: var(--text-secondary); font-size: 13px; }
-        .hidden { display: none; }
-        .cancel-btn { background: transparent; border: 1px solid var(--border); border-radius: var(--radius); padding: 4px 12px; cursor: pointer; color: var(--text-secondary); }
-        .gallery-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; }
-        .gallery-item { background: var(--surface-elevated); border-radius: var(--radius); padding: 24px; text-align: center; font-size: 32px; }
+
+        /* Итоговое подтверждение */
+        .summary-card {
+            background: var(--tg-theme-secondary-bg-color);
+            border-radius: 20px;
+            padding: 20px;
+            margin: 16px 0;
+        }
+        .summary-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px 0;
+            border-bottom: 1px solid var(--tg-theme-hint-color);
+        }
+        .summary-row:last-child { border-bottom: none; }
+        .summary-label { opacity: 0.7; }
+        .summary-value { font-weight: 600; }
+
+        .error { color: #ff3b30; font-size: 14px; margin-top: 8px; }
+        .footer { margin-top: 24px; text-align: center; font-size: 12px; color: var(--tg-theme-hint-color); }
     </style>
 </head>
 <body>
-<div class="container">
-    <div class="theme-switch">
-        <button id="themeToggleBtn" class="theme-btn">🌙 Тёмная тема</button>
-    </div>
-    <h1>✂️ BARBERSHOP</h1>
-    <div class="headline">Премиум стрижки. Безупречный стиль.</div>
 
-    <!-- ЭКРАН ЗАПИСИ -->
-    <div id="bookingScreen" class="screen active">
-        <div class="card">
-            <div class="card-title">👨‍🦰 Выбрать мастера</div>
-            <div class="masters-scroll" id="mastersList"></div>
-        </div>
-
-        <div class="card">
-            <div class="card-title">💈 Выбрать услугу</div>
-            <div class="services-list" id="servicesList"></div>
-        </div>
-
-        <div class="card">
-            <div class="card-title">📅 Выбрать дату</div>
-            <div id="calendarWidget"></div>
-        </div>
-
-        <div class="card">
-            <div class="card-title">⏰ Выбрать время</div>
-            <div id="timeSlotsContainer" class="time-slots">Сначала выберите мастера и дату</div>
-        </div>
-
-        <div class="card">
-            <div class="card-title">📞 Контактные данные</div>
-            <input type="tel" id="phoneInput" class="input-field" placeholder="+7 999 123-45-67">
-            <textarea id="commentInput" class="input-field" rows="2" placeholder="Пожелания, детали..."></textarea>
-        </div>
-
-        <div id="summaryBlock" class="summary-card hidden"></div>
-        <button id="submitBookingBtn" class="btn" disabled>Подтвердить запись</button>
-        <div id="bookingFeedback" class="hidden" style="margin-top: 16px; text-align:center; color:var(--gold);"></div>
+    <!-- Progress Bar -->
+    <div class="progress" id="progress">
+        <div class="progress-step active" data-step="1"></div>
+        <div class="progress-step" data-step="2"></div>
+        <div class="progress-step" data-step="3"></div>
+        <div class="progress-step" data-step="4"></div>
     </div>
 
-    <!-- МОИ ЗАПИСИ -->
-    <div id="myBookingsScreen" class="screen">
-        <div class="card">
-            <div class="card-title">📋 Мои записи</div>
-            <div id="bookingsList"></div>
+    <!-- ========== ЭКРАН 1: МАСТЕР ========== -->
+    <div id="screen1" class="screen active">
+        <h2>💈 Выберите мастера</h2>
+        <p class="subtitle">Кто будет вас обслуживать?</p>
+        <div id="mastersContainer"></div>
+        <div class="nav-buttons">
+            <button class="btn-secondary" onclick="resetAll()">↺ Сброс</button>
+            <button class="btn-primary" id="btnToScreen2" disabled onclick="goToScreen(2)">Далее →</button>
         </div>
     </div>
 
-    <!-- ПРОФИЛЬ -->
-    <div id="profileScreen" class="screen">
-        <div class="card">
-            <div class="card-title">👤 Профиль</div>
-            <div id="profileInfo"></div>
-        </div>
-        <div class="card">
-            <div class="card-title">⭐ Программа лояльности</div>
-            <div id="loyaltyInfo"></div>
-        </div>
-        <div class="card">
-            <div class="card-title">🔔 Уведомления</div>
-            <div class="flex-between"><span>Telegram-напоминания</span><span class="text-muted">Включены</span></div>
-        </div>
-        <button id="logoutFakeBtn" class="btn btn-secondary">Очистить данные</button>
-    </div>
-
-    <!-- О НАС -->
-    <div id="aboutScreen" class="screen">
-        <div class="card">
-            <div class="card-title">📸 Галерея</div>
-            <div class="gallery-grid">
-                <div class="gallery-item">✂️</div>
-                <div class="gallery-item">🧔</div>
-                <div class="gallery-item">💈</div>
-                <div class="gallery-item">✨</div>
-            </div>
-        </div>
-        <div class="card">
-            <div class="card-title">📍 Контакты</div>
-            <div>Москва, Кузнецкий мост, 12</div>
-            <div>10:00 – 21:00, без выходных</div>
-            <div>+7 (495) 123-45-67</div>
+    <!-- ========== ЭКРАН 2: УСЛУГА ========== -->
+    <div id="screen2" class="screen">
+        <h2>✂️ Выберите услугу</h2>
+        <p class="subtitle" id="masterDisplay"></p>
+        <div id="servicesContainer"></div>
+        <div class="nav-buttons">
+            <button class="btn-secondary" onclick="goToScreen(1)">← Назад</button>
+            <button class="btn-primary" id="btnToScreen3" disabled onclick="goToScreen(3)">Далее →</button>
         </div>
     </div>
-</div>
 
-<!-- нижняя навигация -->
-<div class="bottom-nav">
-    <div class="nav-item active" data-screen="booking"><span class="nav-icon">✂️</span><span>Запись</span></div>
-    <div class="nav-item" data-screen="myBookings"><span class="nav-icon">📋</span><span>Мои записи</span></div>
-    <div class="nav-item" data-screen="profile"><span class="nav-icon">👤</span><span>Профиль</span></div>
-    <div class="nav-item" data-screen="about"><span class="nav-icon">ℹ️</span><span>О нас</span></div>
-</div>
-
-<script src="https://telegram.org/js/telegram-web-app.js"></script>
-<script>
-    // ---------- ИНИЦИАЛИЗАЦИЯ ----------
-    const tg = window.Telegram.WebApp;
-    tg.expand();
-    tg.ready();
-
-    const API_URL = "https://functions.yandexcloud.net/d4eho1fu83ho2dusd781";
-    let currentUser = {
-        id: tg.initDataUnsafe?.user?.id || 0,
-        name: tg.initDataUnsafe?.user?.first_name || 'Гость',
-        username: tg.initDataUnsafe?.user?.username || '',
-        phone: localStorage.getItem('userPhone') || ''
-    };
-
-    // ----- ТЕМА -----
-    let isDark = localStorage.getItem('theme') === 'dark';
-    function applyTheme() {
-        if (isDark) document.body.classList.add('dark');
-        else document.body.classList.remove('dark');
-        document.getElementById('themeToggleBtn').innerText = isDark ? '☀️ Светлая тема' : '🌙 Тёмная тема';
-    }
-    document.getElementById('themeToggleBtn').onclick = () => {
-        isDark = !isDark;
-        localStorage.setItem('theme', isDark ? 'dark' : 'light');
-        applyTheme();
-    };
-    applyTheme();
-
-    // ----- ДАННЫЕ -----
-    let masters = [];
-    let selectedMaster = null;
-    let selectedService = null;
-    let selectedDate = null;
-    let selectedTime = null;
-    let availableSlots = [];
-    let currentMonth = new Date();
-
-    const services = [
-        { id: 1, name: "Мужская стрижка", price: 2500, duration: 45 },
-        { id: 2, name: "Стрижка + борода", price: 3500, duration: 60 },
-        { id: 3, name: "Королевское бритьё", price: 2000, duration: 40 },
-        { id: 4, name: "Детская стрижка", price: 1500, duration: 30 }
-    ];
-
-    // ----- API -----
-    async function callAPI(action, payload = {}) {
-        const res = await fetch(API_URL, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ action, ...payload })
-        });
-        return await res.json();
-    }
-
-    async function fetchFreeSlots(date, masterName) {
-        const data = await callAPI('getFreeSlots', { date, masterId: masterName });
-        return data.slots || [];
-    }
-
-    async function createBooking(bookingData) {
-        return await callAPI('book', { booking: bookingData });
-    }
-
-    async function getAllBookings() {
-        const data = await callAPI('getAllBookings');
-        return data.bookings || [];
-    }
-
-    async function cancelBookingAPI(bookingId) {
-        return await callAPI('cancelBooking', { bookingId });
-    }
-
-    async function getClientData(clientId) {
-        if (!clientId) return null;
-        const data = await callAPI('getClient', { clientId });
-        return data.client;
-    }
-
-    async function loadBarbers() {
-        // Сначала пробуем загрузить из localStorage (синхронизация с админкой)
-        const local = localStorage.getItem('barbersData');
-        if (local) {
-            try {
-                masters = JSON.parse(local);
-                console.log('Barbers loaded from localStorage:', masters.length);
-                return;
-            } catch (e) {}
-        }
-        // Если нет — запрашиваем из API
-        const data = await callAPI('getBarbers', {});
-        masters = data.barbers || [];
-        localStorage.setItem('barbersData', JSON.stringify(masters));
-        console.log('Barbers loaded from API:', masters.length);
-    }
-
-    // ----- UI -----
-    function renderMasters() {
-        const container = document.getElementById('mastersList');
-        if (!masters.length) {
-            container.innerHTML = '<div class="text-muted">Загрузка мастеров...</div>';
-            return;
-        }
-        container.innerHTML = masters.map(m => `
-            <div class="master-card ${selectedMaster?.id === m.id ? 'selected' : ''}" data-id="${m.id}">
-                <div class="master-avatar">${m.avatar || '✂️'}</div>
-                <div class="master-name">${m.name}</div>
-                <div class="rating"><span class="stars">${'★'.repeat(Math.floor(m.rating || 4.5))}${(m.rating || 4.5) % 1 >= 0.5 ? '½' : ''}${'☆'.repeat(5 - Math.ceil(m.rating || 4.5))}</span> ${m.rating || 4.5}</div>
-            </div>
-        `).join('');
-        document.querySelectorAll('.master-card').forEach(el => {
-            el.addEventListener('click', () => {
-                selectedMaster = masters.find(m => m.id === el.dataset.id);
-                renderMasters();
-                if (selectedDate) loadSlotsAndRender();
-                updateSummary();
-            });
-        });
-    }
-
-    function renderServices() {
-        const container = document.getElementById('servicesList');
-        container.innerHTML = services.map(s => `
-            <div class="service-item ${selectedService?.id === s.id ? 'selected' : ''}" data-id="${s.id}">
-                <div class="service-left">
-                    <div class="service-name">${s.name}</div>
-                    <div class="service-duration">${s.duration} мин</div>
-                </div>
-                <div class="service-price">${s.price} ₽</div>
-            </div>
-        `).join('');
-        document.querySelectorAll('.service-item').forEach(el => {
-            el.addEventListener('click', () => {
-                selectedService = services.find(s => s.id === parseInt(el.dataset.id));
-                renderServices();
-                updateSummary();
-            });
-        });
-    }
-
-    function renderCalendar() {
-        const year = currentMonth.getFullYear(), month = currentMonth.getMonth();
-        const firstDay = new Date(year, month, 1);
-        const startWeekday = firstDay.getDay();
-        const daysInMonth = new Date(year, month+1, 0).getDate();
-        const today = new Date(); today.setHours(0,0,0,0);
-        const minDate = new Date(today); minDate.setDate(today.getDate()+1);
-        let html = `<div class="calendar-header">
-            <button class="month-selector" id="prevMonth">◀</button>
-            <span>${firstDay.toLocaleString('ru', { month: 'long', year: 'numeric' })}</span>
-            <button class="month-selector" id="nextMonth">▶</button>
+    <!-- ========== ЭКРАН 3: ДАТА И ВРЕМЯ ========== -->
+    <div id="screen3" class="screen">
+        <h2>📅 Выберите дату и время</h2>
+        <p class="subtitle" id="serviceDisplay"></p>
+        <div style="margin: 16px 0 8px 0; font-weight: 600; font-size: 14px;">📆 Дата</div>
+        <div id="datesContainer" class="grid-4"></div>
+        <div style="margin: 16px 0 8px 0; font-weight: 600; font-size: 14px;">⏰ Время</div>
+        <div id="timesContainer" class="grid-3"></div>
+        <div class="nav-buttons">
+            <button class="btn-secondary" onclick="goToScreen(2)">← Назад</button>
+            <button class="btn-primary" id="btnToScreen4" disabled onclick="goToScreen(4)">Далее →</button>
         </div>
-        <div class="weekdays">${['Пн','Вт','Ср','Чт','Пт','Сб','Вс'].map(d=>`<div>${d}</div>`).join('')}</div>
-        <div class="calendar-days" id="calendarDays"></div>`;
-        document.getElementById('calendarWidget').innerHTML = html;
+    </div>
 
-        let offset = (startWeekday === 0 ? 6 : startWeekday-1);
-        let daysHtml = '';
-        for (let i=0; i<offset; i++) daysHtml += '<div class="day-cell disabled"></div>';
-        for (let d=1; d<=daysInMonth; d++) {
-            let dateObj = new Date(year, month, d);
-            let dateStr = dateObj.toISOString().split('T')[0];
-            let cls = 'day-cell';
-            if (dateObj < minDate) cls += ' disabled';
-            daysHtml += `<div class="${cls}" data-date="${dateStr}">${d}</div>`;
-        }
-        document.getElementById('calendarDays').innerHTML = daysHtml;
-        document.querySelectorAll('.day-cell:not(.disabled)').forEach(el => {
-            el.addEventListener('click', async () => {
-                selectedDate = el.dataset.date;
-                document.querySelectorAll('.day-cell').forEach(c => c.classList.remove('selected'));
-                el.classList.add('selected');
-                if (selectedMaster) await loadSlotsAndRender();
-                updateSummary();
-            });
-        });
-        document.getElementById('prevMonth')?.addEventListener('click', ()=>{ currentMonth.setMonth(currentMonth.getMonth()-1); renderCalendar(); });
-        document.getElementById('nextMonth')?.addEventListener('click', ()=>{ currentMonth.setMonth(currentMonth.getMonth()+1); renderCalendar(); });
-    }
+    <!-- ========== ЭКРАН 4: КОНТАКТЫ ========== -->
+    <div id="screen4" class="screen">
+        <h2>📞 Ваши контакты</h2>
+        <p class="subtitle">Мы свяжемся с вами для подтверждения</p>
+        <div class="summary-card" id="bookingPreview"></div>
+        <input type="tel" id="phone" placeholder="+7 (XXX) XXX-XX-XX" autocomplete="tel">
+        <div id="errorMsg" class="error" style="display:none;"></div>
+        <div class="nav-buttons">
+            <button class="btn-secondary" onclick="goToScreen(3)">← Назад</button>
+            <button class="btn-primary" onclick="submitBooking()">✅ Записаться</button>
+        </div>
+    </div>
 
-    async function loadSlotsAndRender() {
-        if (!selectedMaster || !selectedDate) return;
-        const slots = await fetchFreeSlots(selectedDate, selectedMaster.name);
-        availableSlots = slots;
-        const container = document.getElementById('timeSlotsContainer');
-        if (!availableSlots.length) { container.innerHTML = '<div class="text-muted">Нет свободных окон</div>'; return; }
-        container.innerHTML = availableSlots.map(slot => `<div class="time-slot ${selectedTime===slot?'selected':''}" data-time="${slot}">${slot}</div>`).join('');
-        document.querySelectorAll('.time-slot').forEach(el => {
-            el.addEventListener('click', () => { selectedTime = el.dataset.time; loadSlotsAndRender(); updateSummary(); });
-        });
-    }
+    <!-- ========== ЭКРАН 5: ИТОГ ========== -->
+    <div id="screen5" class="screen">
+        <h2>✅ Запись подтверждена!</h2>
+        <div id="finalSummary" class="summary-card"></div>
+        <button class="btn-primary" onclick="resetAll()">➕ Новая запись</button>
+        <div class="footer">💈 Ждем вас в барбершопе!</div>
+    </div>
 
-    function updateSummary() {
-        const summaryDiv = document.getElementById('summaryBlock');
-        const btn = document.getElementById('submitBookingBtn');
-        if (selectedMaster && selectedService && selectedDate && selectedTime) {
-            let displayDate = new Date(selectedDate).toLocaleDateString('ru', { day:'numeric', month:'long', weekday:'long' });
-            summaryDiv.innerHTML = `
-                <div class="summary-row"><span>Мастер</span><span>${selectedMaster.name}</span></div>
-                <div class="summary-row"><span>Услуга</span><span>${selectedService.name}</span></div>
-                <div class="summary-row"><span>Длительность</span><span>${selectedService.duration} мин</span></div>
-                <div class="summary-row"><span>Дата, время</span><span>${displayDate}, ${selectedTime}</span></div>
-                <div class="summary-row"><span>Стоимость</span><span>${selectedService.price} ₽</span></div>
-            `;
-            summaryDiv.classList.remove('hidden');
-            btn.disabled = false;
-        } else {
-            summaryDiv.classList.add('hidden');
-            btn.disabled = true;
-        }
-    }
+    <script>
+        const tg = window.Telegram.WebApp;
+        tg.expand();
+        tg.enableClosingConfirmation();
 
-    async function submitBooking() {
-        if (!selectedMaster || !selectedService || !selectedDate || !selectedTime) return;
-        const phone = document.getElementById('phoneInput').value;
-        if (phone) { currentUser.phone = phone; localStorage.setItem('userPhone', phone); }
-        const bookingData = {
-            master: selectedMaster.name,
-            service: selectedService.name,
-            price: selectedService.price,
-            date: selectedDate,
-            time: selectedTime,
-            client_name: currentUser.name,
-            client_username: currentUser.username,
-            client_id: currentUser.id,
-            client_phone: phone,
-            comment: document.getElementById('commentInput').value
+        // ===== ДАННЫЕ =====
+        const MASTERS = [
+            { id: 1, name: 'Алексей', emoji: '👨‍🦱' },
+            { id: 2, name: 'Дмитрий', emoji: '🧔' },
+            { id: 3, name: 'Сергей', emoji: '👨' }
+        ];
+
+        const SERVICES = [
+            { id: 1, name: 'Стрижка', price: 1000, duration: 30 },
+            { id: 2, name: 'Борода', price: 500, duration: 20 },
+            { id: 3, name: 'Стрижка + борода', price: 1300, duration: 50 },
+            { id: 4, name: 'Детская стрижка', price: 700, duration: 20 }
+        ];
+
+        const TIMES = ['10:00', '11:00', '12:00', '13:00', '14:00', '15:00', '16:00', '17:00', '18:00'];
+
+        // ===== СОСТОЯНИЕ =====
+        let state = {
+            master: null,
+            service: null,
+            date: null,
+            time: null
         };
-        const btn = document.getElementById('submitBookingBtn');
-        btn.innerText = 'Отправка...';
-        btn.disabled = true;
-        const feedback = document.getElementById('bookingFeedback');
-        try {
-            const result = await createBooking(bookingData);
-            if (result.success) {
-                feedback.innerHTML = '✅ Запись подтверждена! Ждём вас.';
-                feedback.classList.remove('hidden');
-                setTimeout(() => { feedback.classList.add('hidden'); switchScreen('myBookings'); loadUserBookings(); }, 1500);
-                selectedTime = null;
-                loadSlotsAndRender();
-                updateSummary();
-            } else { alert('Ошибка при записи'); }
-        } catch(e) { alert('Ошибка сети'); }
-        finally { btn.innerText = 'Подтвердить запись'; btn.disabled = false; }
-    }
 
-    async function loadUserBookings() {
-        const container = document.getElementById('bookingsList');
-        container.innerHTML = '<div class="text-muted">Загрузка...</div>';
-        const all = await getAllBookings();
-        const user = all.filter(b => b.client_id == currentUser.id && b.status !== 'cancelled');
-        if (!user.length) { container.innerHTML = '<div class="text-muted">Нет активных записей</div>'; return; }
-        let html = '';
-        for (let b of user) {
-            html += `<div class="booking-card">
-                <div class="flex-between"><span class="text-muted">${b.date} в ${b.time}</span>
-                <button class="cancel-btn" data-id="${b.booking_id}">Отменить</button></div>
-                <div><strong>${b.service}</strong> — ${b.master}</div>
-                <div>${b.price} ₽</div>
-            </div>`;
+        // ===== API =====
+        const SAVE_API = "https://d5dleakfashkdnoum27j.y3q8o1jq.apigw.yandexcloud.net/";
+        const user = tg.initDataUnsafe?.user || { id: 0, first_name: 'Гость', last_name: '' };
+
+        // ===== ФУНКЦИИ НАВИГАЦИИ =====
+        function goToScreen(num) {
+            document.querySelectorAll('.screen').forEach(el => el.classList.remove('active'));
+            document.getElementById(`screen${num}`).classList.add('active');
+            updateProgress(num);
+            window.scrollTo(0, 0);
         }
-        container.innerHTML = html;
-        document.querySelectorAll('.cancel-btn').forEach(btn => {
-            btn.addEventListener('click', async () => {
-                if(confirm('Отменить запись?')) {
-                    await cancelBookingAPI(btn.dataset.id);
-                    await loadUserBookings();
-                    if(currentUser.id) await loadProfileData();
-                }
+
+        function updateProgress(step) {
+            document.querySelectorAll('.progress-step').forEach((el, i) => {
+                el.classList.remove('active', 'done');
+                if (i + 1 < step) el.classList.add('done');
+                if (i + 1 === step) el.classList.add('active');
             });
-        });
-    }
+        }
 
-    async function loadProfileData() {
-        if (currentUser.id === 0) { document.getElementById('profileInfo').innerHTML = '<div>Гость, войдите в Telegram</div>'; return; }
-        let client = await getClientData(currentUser.id);
-        if (!client) client = { total_visits: 0, total_spent: 0, preferred_master: '—', phone: currentUser.phone };
-        let visits = client.total_visits || 0;
-        let progress = (visits % 10) * 10;
-        document.getElementById('profileInfo').innerHTML = `
-            <div><strong>${client.name || currentUser.name}</strong> ${client.username ? '@'+client.username : ''}</div>
-            <div>📞 ${client.phone || currentUser.phone || 'не указан'}</div>
-            <div>✂️ Визитов: ${visits}</div>
-            <div>💰 Потрачено: ${client.total_spent || 0} ₽</div>
-            <div>⭐ Любимый мастер: ${client.preferred_master || '—'}</div>
-        `;
-        document.getElementById('loyaltyInfo').innerHTML = `
-            <div>До бесплатной стрижки: ${10 - (visits % 10)} посещений</div>
-            <div class="progress-bar"><div class="progress-fill" style="width:${progress}%"></div></div>
-            <div class="text-muted">Каждое 10-е посещение — бесплатно</div>
-        `;
-    }
+        // ===== РЕНДЕРИНГ =====
+        function renderMasters() {
+            const container = document.getElementById('mastersContainer');
+            container.innerHTML = '';
+            MASTERS.forEach(m => {
+                const div = document.createElement('div');
+                div.className = 'option-card';
+                div.innerHTML = `<span>${m.emoji} ${m.name}</span><span class="arrow">→</span>`;
+                div.onclick = () => selectMaster(m.id);
+                if (state.master?.id === m.id) div.classList.add('selected');
+                container.appendChild(div);
+            });
+        }
 
-    // ----- НАВИГАЦИЯ -----
-    function switchScreen(screenId) {
-        document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
-        document.getElementById(screenId + 'Screen').classList.add('active');
-        document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
-        document.querySelector(`.nav-item[data-screen="${screenId}"]`).classList.add('active');
-        if (screenId === 'myBookings') loadUserBookings();
-        if (screenId === 'profile') loadProfileData();
-    }
-    document.querySelectorAll('.nav-item').forEach(nav => {
-        nav.addEventListener('click', () => switchScreen(nav.dataset.screen));
-    });
+        function renderServices() {
+            const container = document.getElementById('servicesContainer');
+            container.innerHTML = '';
+            SERVICES.forEach(s => {
+                const div = document.createElement('div');
+                div.className = 'option-card';
+                div.innerHTML = `
+                    <span>${s.name}</span>
+                    <span><span class="price">${s.price} ₽</span> · ${s.duration} мин <span class="arrow">→</span></span>
+                `;
+                div.onclick = () => selectService(s.id);
+                if (state.service?.id === s.id) div.classList.add('selected');
+                container.appendChild(div);
+            });
+        }
 
-    // ----- ИНИЦИАЛИЗАЦИЯ -----
-    async function init() {
-        await loadBarbers();
+        function renderDates() {
+            const container = document.getElementById('datesContainer');
+            container.innerHTML = '';
+            const days = ['Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб', 'Вс'];
+            for (let i = 1; i <= 7; i++) {
+                const d = new Date();
+                d.setDate(d.getDate() + i);
+                const dayNum = d.getDate();
+                const dayName = days[d.getDay() === 0 ? 6 : d.getDay() - 1];
+                const dateStr = `${dayNum} ${dayName}`;
+                const div = document.createElement('div');
+                div.className = 'grid-item';
+                div.innerHTML = `${dateStr}`;
+                div.onclick = () => selectDate(dateStr);
+                if (state.date === dateStr) div.classList.add('selected');
+                container.appendChild(div);
+            }
+        }
+
+        function renderTimes() {
+            const container = document.getElementById('timesContainer');
+            container.innerHTML = '';
+            TIMES.forEach(t => {
+                const div = document.createElement('div');
+                div.className = 'grid-item';
+                div.textContent = t;
+                div.onclick = () => selectTime(t);
+                if (state.time === t) div.classList.add('selected');
+                container.appendChild(div);
+            });
+        }
+
+        // ===== SELECTORS =====
+        function selectMaster(id) {
+            state.master = MASTERS.find(m => m.id === id);
+            document.getElementById('masterDisplay').textContent = `💈 Мастер: ${state.master.name}`;
+            document.getElementById('btnToScreen2').disabled = false;
+            renderMasters();
+        }
+
+        function selectService(id) {
+            state.service = SERVICES.find(s => s.id === id);
+            document.getElementById('serviceDisplay').textContent = `✂️ ${state.service.name} — ${state.service.price} ₽`;
+            document.getElementById('btnToScreen3').disabled = false;
+            renderServices();
+        }
+
+        function selectDate(date) {
+            state.date = date;
+            renderDates();
+            checkScreen3Ready();
+        }
+
+        function selectTime(time) {
+            state.time = time;
+            renderTimes();
+            checkScreen3Ready();
+        }
+
+        function checkScreen3Ready() {
+            document.getElementById('btnToScreen4').disabled = !(state.date && state.time);
+        }
+
+        // ===== ПРЕДПРОСМОТР =====
+        function updatePreview() {
+            const preview = document.getElementById('bookingPreview');
+            preview.innerHTML = `
+                <div class="summary-row"><span class="summary-label">💈 Мастер</span><span class="summary-value">${state.master?.name || '—'}</span></div>
+                <div class="summary-row"><span class="summary-label">✂️ Услуга</span><span class="summary-value">${state.service?.name || '—'}</span></div>
+                <div class="summary-row"><span class="summary-label">💰 Стоимость</span><span class="summary-value">${state.service?.price || 0} ₽</span></div>
+                <div class="summary-row"><span class="summary-label">📅 Дата</span><span class="summary-value">${state.date || '—'}</span></div>
+                <div class="summary-row"><span class="summary-label">⏰ Время</span><span class="summary-value">${state.time || '—'}</span></div>
+            `;
+        }
+
+        // ===== ОТПРАВКА =====
+        async function submitBooking() {
+            const phone = document.getElementById('phone').value.trim();
+            if (!phone) {
+                document.getElementById('errorMsg').textContent = 'Пожалуйста, введите номер телефона';
+                document.getElementById('errorMsg').style.display = 'block';
+                return;
+            }
+            document.getElementById('errorMsg').style.display = 'none';
+
+            const data = {
+                master_id: state.master.id,
+                master_name: state.master.name,
+                service_id: state.service.id,
+                service: state.service.name,
+                price: state.service.price,
+                date: state.date,
+                time: state.time,
+                phone: phone,
+                user_id: user.id,
+                first_name: user.first_name || '',
+                last_name: user.last_name || ''
+            };
+
+            try {
+                const response = await fetch(SAVE_API, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ web_app_data: { data: JSON.stringify(data) } })
+                });
+                const result = await response.json();
+
+                if (result.ok) {
+                    document.getElementById('finalSummary').innerHTML = `
+                        <div class="summary-row"><span class="summary-label">💈 Мастер</span><span class="summary-value">${data.master_name}</span></div>
+                        <div class="summary-row"><span class="summary-label">✂️ Услуга</span><span class="summary-value">${data.service}</span></div>
+                        <div class="summary-row"><span class="summary-label">💰 Стоимость</span><span class="summary-value">${data.price} ₽</span></div>
+                        <div class="summary-row"><span class="summary-label">📅 Дата</span><span class="summary-value">${data.date}</span></div>
+                        <div class="summary-row"><span class="summary-label">⏰ Время</span><span class="summary-value">${data.time}</span></div>
+                        <div class="summary-row"><span class="summary-label">📞 Телефон</span><span class="summary-value">${data.phone}</span></div>
+                    `;
+                    goToScreen(5);
+                } else {
+                    throw new Error(result.error || 'Ошибка сохранения');
+                }
+            } catch (e) {
+                document.getElementById('errorMsg').textContent = '❌ ' + e.message;
+                document.getElementById('errorMsg').style.display = 'block';
+            }
+        }
+
+        // ===== СБРОС =====
+        function resetAll() {
+            state = { master: null, service: null, date: null, time: null };
+            document.getElementById('phone').value = '';
+            document.getElementById('errorMsg').style.display = 'none';
+            renderMasters();
+            renderServices();
+            renderDates();
+            renderTimes();
+            document.getElementById('btnToScreen2').disabled = true;
+            document.getElementById('btnToScreen3').disabled = true;
+            document.getElementById('btnToScreen4').disabled = true;
+            goToScreen(1);
+        }
+
+        // ===== ИНИЦИАЛИЗАЦИЯ =====
         renderMasters();
         renderServices();
-        renderCalendar();
-        if (currentUser.phone) document.getElementById('phoneInput').value = currentUser.phone;
-        if (currentUser.id !== 0) await loadProfileData();
-        document.getElementById('submitBookingBtn').onclick = submitBooking;
-        document.getElementById('logoutFakeBtn').onclick = () => {
-            localStorage.removeItem('userPhone');
-            currentUser.phone = '';
-            document.getElementById('phoneInput').value = '';
-            alert('Данные очищены');
-        };
-        // Подписка на изменения барберов из админки
-        window.addEventListener('storage', (e) => {
-            if (e.key === 'barbersData') {
-                try {
-                    masters = JSON.parse(e.newValue);
-                    renderMasters();
-                } catch (e) {}
-            }
-        });
-    }
-    init();
-</script>
+        renderDates();
+        renderTimes();
+        document.getElementById('btnToScreen2').disabled = true;
+        document.getElementById('btnToScreen3').disabled = true;
+        document.getElementById('btnToScreen4').disabled = true;
+
+        // Обновляем предпросмотр перед переходом на экран 4
+        document.querySelector('#btnToScreen4').addEventListener('click', updatePreview);
+    </script>
 </body>
 </html>
