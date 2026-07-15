@@ -3,85 +3,134 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-    <title>Запись в барбершоп</title>
+    <title>Barber Lamborghini</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body {
-            font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
-            background: var(--tg-theme-bg-color);
-            color: var(--tg-theme-text-color);
-            padding: 20px;
-            transition: background 0.2s ease;
+        /* ===== GLOBAL ===== */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
         }
-        
-        /* Progress Bar */
+
+        body {
+            font-family: 'Helvetica Neue', system-ui, -apple-system, sans-serif;
+            background: #0a0a0a;
+            color: #ffffff;
+            padding: 20px;
+            min-height: 100vh;
+            transition: background 0.2s;
+        }
+
+        /* Акцентный желтый — как у Lamborghini */
+        :root {
+            --accent: #f8c300;
+            --accent-dark: #d4a800;
+            --bg-dark: #0a0a0a;
+            --bg-card: #1a1a1a;
+            --bg-card-hover: #222222;
+            --text-primary: #ffffff;
+            --text-secondary: #aaaaaa;
+            --border-radius: 4px; /* Острые углы, как в дизайне Lamborghini */
+        }
+
+        /* ===== PROGRESS BAR ===== */
         .progress {
             display: flex;
             justify-content: space-between;
-            margin-bottom: 24px;
-            gap: 4px;
+            margin-bottom: 32px;
+            gap: 6px;
         }
         .progress-step {
             flex: 1;
-            height: 4px;
-            background: var(--tg-theme-hint-color);
-            border-radius: 4px;
-            transition: background 0.3s ease;
-            opacity: 0.3;
+            height: 2px;
+            background: #333;
+            border-radius: 2px;
+            transition: background 0.4s ease;
         }
         .progress-step.active {
-            background: var(--tg-theme-button-color);
-            opacity: 1;
+            background: var(--accent);
         }
         .progress-step.done {
-            background: var(--tg-theme-button-color);
-            opacity: 0.5;
+            background: var(--accent-dark);
         }
 
+        /* ===== TYPOGRAPHY ===== */
         h2 {
-            font-size: 22px;
-            margin-bottom: 8px;
+            font-size: 28px;
             font-weight: 700;
+            letter-spacing: -0.5px;
+            margin-bottom: 4px;
+            text-transform: uppercase;
         }
         .subtitle {
-            color: var(--tg-theme-hint-color);
+            color: var(--text-secondary);
             font-size: 14px;
-            margin-bottom: 20px;
+            font-weight: 300;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            margin-bottom: 24px;
+            border-bottom: 1px solid #222;
+            padding-bottom: 12px;
         }
 
-        /* Карточки-опции */
+        /* ===== SCREENS ===== */
+        .screen {
+            display: none;
+            animation: fadeSlide 0.35s ease;
+        }
+        .screen.active {
+            display: block;
+        }
+        @keyframes fadeSlide {
+            from { opacity: 0; transform: translateY(12px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* ===== OPTION CARDS (Lamborghini style) ===== */
         .option-card {
-            background: var(--tg-theme-secondary-bg-color);
-            border: 2px solid transparent;
-            border-radius: 16px;
-            padding: 16px 18px;
+            background: var(--bg-card);
+            border: 1px solid #2a2a2a;
+            border-radius: var(--border-radius);
+            padding: 18px 20px;
             margin-bottom: 10px;
             width: 100%;
             text-align: left;
             font-size: 16px;
             font-weight: 500;
+            color: var(--text-primary);
             cursor: pointer;
-            transition: all 0.2s ease;
+            transition: all 0.15s ease;
             display: flex;
             justify-content: space-between;
             align-items: center;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
         }
-        .option-card:active { transform: scale(0.98); }
+        .option-card:hover {
+            background: var(--bg-card-hover);
+            border-color: #444;
+        }
+        .option-card:active {
+            transform: scale(0.98);
+        }
         .option-card.selected {
-            border-color: var(--tg-theme-button-color);
-            background: var(--tg-theme-bg-color);
+            border-color: var(--accent);
+            background: #1a1a1a;
+            box-shadow: 0 0 20px rgba(248, 195, 0, 0.05);
         }
         .option-card .price {
+            color: var(--accent);
             font-weight: 700;
-            color: var(--tg-theme-button-color);
+            font-size: 18px;
         }
         .option-card .arrow {
+            color: var(--accent);
             font-size: 18px;
-            color: var(--tg-theme-hint-color);
+            margin-left: 12px;
         }
 
-        /* Сетка для дат и времени */
+        /* ===== GRID (for dates & times) ===== */
         .grid-4 {
             display: grid;
             grid-template-columns: repeat(4, 1fr);
@@ -95,95 +144,125 @@
             margin: 16px 0;
         }
         .grid-item {
-            background: var(--tg-theme-secondary-bg-color);
-            border: 2px solid transparent;
-            border-radius: 14px;
+            background: var(--bg-card);
+            border: 1px solid #2a2a2a;
+            border-radius: var(--border-radius);
             padding: 14px 8px;
             text-align: center;
             font-size: 15px;
             font-weight: 500;
+            color: var(--text-primary);
             cursor: pointer;
-            transition: all 0.2s ease;
+            transition: all 0.15s ease;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
         }
-        .grid-item:active { transform: scale(0.95); }
+        .grid-item:hover {
+            background: var(--bg-card-hover);
+            border-color: #444;
+        }
+        .grid-item:active {
+            transform: scale(0.95);
+        }
         .grid-item.selected {
-            border-color: var(--tg-theme-button-color);
-            background: var(--tg-theme-bg-color);
+            border-color: var(--accent);
+            background: #1a1a1a;
+            box-shadow: 0 0 20px rgba(248, 195, 0, 0.05);
         }
         .grid-item .day {
-            font-size: 12px;
-            opacity: 0.7;
+            font-size: 11px;
+            opacity: 0.5;
+            display: block;
+            margin-top: 4px;
+            font-weight: 300;
         }
 
-        /* Кнопки навигации */
+        /* ===== SECTION TITLES (for date/time labels) ===== */
+        .section-label {
+            font-size: 11px;
+            font-weight: 600;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            color: var(--text-secondary);
+            margin: 20px 0 8px 0;
+        }
+
+        /* ===== BUTTONS ===== */
         .nav-buttons {
             display: flex;
             gap: 12px;
-            margin-top: 24px;
+            margin-top: 32px;
         }
         .btn-primary {
             flex: 1;
-            background: var(--tg-theme-button-color);
-            color: var(--tg-theme-button-text-color);
+            background: var(--accent);
+            color: #000000;
             border: none;
-            border-radius: 14px;
-            padding: 14px;
-            font-size: 16px;
-            font-weight: 600;
+            border-radius: var(--border-radius);
+            padding: 16px;
+            font-size: 14px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
             cursor: pointer;
-            transition: all 0.2s ease;
+            transition: all 0.15s ease;
         }
-        .btn-primary:active { transform: scale(0.98); opacity: 0.8; }
+        .btn-primary:active {
+            transform: scale(0.97);
+            background: var(--accent-dark);
+        }
         .btn-primary:disabled {
-            opacity: 0.4;
+            opacity: 0.2;
             cursor: not-allowed;
+            transform: none;
         }
         .btn-secondary {
             flex: 0.5;
             background: transparent;
-            color: var(--tg-theme-text-color);
-            border: 1px solid var(--tg-theme-hint-color);
-            border-radius: 14px;
-            padding: 14px;
-            font-size: 16px;
+            color: var(--text-secondary);
+            border: 1px solid #333;
+            border-radius: var(--border-radius);
+            padding: 16px;
+            font-size: 13px;
             font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 1px;
             cursor: pointer;
-            transition: all 0.2s ease;
+            transition: all 0.15s ease;
         }
-        .btn-secondary:active { transform: scale(0.98); }
+        .btn-secondary:active {
+            transform: scale(0.97);
+            border-color: #666;
+        }
 
-        /* Инпут */
+        /* ===== INPUT ===== */
         input {
             width: 100%;
             padding: 16px;
-            border: 2px solid var(--tg-theme-hint-color);
-            border-radius: 14px;
+            background: var(--bg-card);
+            border: 1px solid #2a2a2a;
+            border-radius: var(--border-radius);
             font-size: 16px;
-            background: var(--tg-theme-bg-color);
-            color: var(--tg-theme-text-color);
+            color: var(--text-primary);
             box-sizing: border-box;
             margin: 12px 0;
+            transition: border-color 0.2s;
         }
         input:focus {
             outline: none;
-            border-color: var(--tg-theme-button-color);
+            border-color: var(--accent);
+        }
+        input::placeholder {
+            color: #555;
+            font-weight: 300;
+            letter-spacing: 0.5px;
         }
 
-        /* Экраны */
-        .screen {
-            display: none;
-            animation: slideIn 0.3s ease;
-        }
-        .screen.active { display: block; }
-        @keyframes slideIn {
-            from { opacity: 0; transform: translateX(20px); }
-            to { opacity: 1; transform: translateX(0); }
-        }
-
-        /* Итоговое подтверждение */
+        /* ===== SUMMARY CARD ===== */
         .summary-card {
-            background: var(--tg-theme-secondary-bg-color);
-            border-radius: 20px;
+            background: var(--bg-card);
+            border: 1px solid #2a2a2a;
+            border-radius: var(--border-radius);
             padding: 20px;
             margin: 16px 0;
         }
@@ -191,19 +270,47 @@
             display: flex;
             justify-content: space-between;
             padding: 10px 0;
-            border-bottom: 1px solid var(--tg-theme-hint-color);
+            border-bottom: 1px solid #1a1a1a;
+            text-transform: uppercase;
+            font-size: 13px;
+            letter-spacing: 0.3px;
         }
-        .summary-row:last-child { border-bottom: none; }
-        .summary-label { opacity: 0.7; }
-        .summary-value { font-weight: 600; }
+        .summary-row:last-child {
+            border-bottom: none;
+        }
+        .summary-label {
+            color: var(--text-secondary);
+        }
+        .summary-value {
+            font-weight: 600;
+            color: var(--accent);
+        }
 
-        .error { color: #ff3b30; font-size: 14px; margin-top: 8px; }
-        .footer { margin-top: 24px; text-align: center; font-size: 12px; color: var(--tg-theme-hint-color); }
+        /* ===== MISC ===== */
+        .error {
+            color: #ff3b30;
+            font-size: 13px;
+            margin-top: 8px;
+            text-align: center;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        .footer {
+            margin-top: 32px;
+            text-align: center;
+            font-size: 10px;
+            color: #333;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+        .accent-text {
+            color: var(--accent);
+        }
     </style>
 </head>
 <body>
 
-    <!-- Progress Bar -->
+    <!-- ===== PROGRESS ===== -->
     <div class="progress" id="progress">
         <div class="progress-step active" data-step="1"></div>
         <div class="progress-step" data-step="2"></div>
@@ -211,21 +318,21 @@
         <div class="progress-step" data-step="4"></div>
     </div>
 
-    <!-- ========== ЭКРАН 1: МАСТЕР ========== -->
+    <!-- ===== SCREEN 1: MASTER ===== -->
     <div id="screen1" class="screen active">
-        <h2>💈 Выберите мастера</h2>
-        <p class="subtitle">Кто будет вас обслуживать?</p>
+        <h2>🏎️ <span class="accent-text">Master</span></h2>
+        <div class="subtitle">Выберите своего гонщика</div>
         <div id="mastersContainer"></div>
         <div class="nav-buttons">
-            <button class="btn-secondary" onclick="resetAll()">↺ Сброс</button>
+            <button class="btn-secondary" onclick="resetAll()">⟲ Сброс</button>
             <button class="btn-primary" id="btnToScreen2" disabled onclick="goToScreen(2)">Далее →</button>
         </div>
     </div>
 
-    <!-- ========== ЭКРАН 2: УСЛУГА ========== -->
+    <!-- ===== SCREEN 2: SERVICE ===== -->
     <div id="screen2" class="screen">
-        <h2>✂️ Выберите услугу</h2>
-        <p class="subtitle" id="masterDisplay"></p>
+        <h2>✂️ <span class="accent-text">Service</span></h2>
+        <div class="subtitle" id="masterDisplay"></div>
         <div id="servicesContainer"></div>
         <div class="nav-buttons">
             <button class="btn-secondary" onclick="goToScreen(1)">← Назад</button>
@@ -233,75 +340,74 @@
         </div>
     </div>
 
-    <!-- ========== ЭКРАН 3: ДАТА И ВРЕМЯ ========== -->
+    <!-- ===== SCREEN 3: DATE & TIME ===== -->
     <div id="screen3" class="screen">
-        <h2>📅 Выберите дату и время</h2>
-        <p class="subtitle" id="serviceDisplay"></p>
-        <div style="margin: 16px 0 8px 0; font-weight: 600; font-size: 14px;">📆 Дата</div>
+        <h2>📅 <span class="accent-text">Schedule</span></h2>
+        <div class="subtitle" id="serviceDisplay"></div>
+
+        <div class="section-label">📆 Date</div>
         <div id="datesContainer" class="grid-4"></div>
-        <div style="margin: 16px 0 8px 0; font-weight: 600; font-size: 14px;">⏰ Время</div>
+
+        <div class="section-label">⏰ Time</div>
         <div id="timesContainer" class="grid-3"></div>
+
         <div class="nav-buttons">
             <button class="btn-secondary" onclick="goToScreen(2)">← Назад</button>
             <button class="btn-primary" id="btnToScreen4" disabled onclick="goToScreen(4)">Далее →</button>
         </div>
     </div>
 
-    <!-- ========== ЭКРАН 4: КОНТАКТЫ ========== -->
+    <!-- ===== SCREEN 4: CONTACTS ===== -->
     <div id="screen4" class="screen">
-        <h2>📞 Ваши контакты</h2>
-        <p class="subtitle">Мы свяжемся с вами для подтверждения</p>
+        <h2>📞 <span class="accent-text">Contacts</span></h2>
+        <div class="subtitle">Оставьте номер для связи</div>
         <div class="summary-card" id="bookingPreview"></div>
         <input type="tel" id="phone" placeholder="+7 (XXX) XXX-XX-XX" autocomplete="tel">
         <div id="errorMsg" class="error" style="display:none;"></div>
         <div class="nav-buttons">
             <button class="btn-secondary" onclick="goToScreen(3)">← Назад</button>
-            <button class="btn-primary" onclick="submitBooking()">✅ Записаться</button>
+            <button class="btn-primary" onclick="submitBooking()">✅ Confirm</button>
         </div>
     </div>
 
-    <!-- ========== ЭКРАН 5: ИТОГ ========== -->
+    <!-- ===== SCREEN 5: FINAL ===== -->
     <div id="screen5" class="screen">
-        <h2>✅ Запись подтверждена!</h2>
+        <h2>🏁 <span class="accent-text">Confirmed</span></h2>
         <div id="finalSummary" class="summary-card"></div>
-        <button class="btn-primary" onclick="resetAll()">➕ Новая запись</button>
-        <div class="footer">💈 Ждем вас в барбершопе!</div>
+        <button class="btn-primary" onclick="resetAll()">🔄 New Booking</button>
+        <div class="footer">💈 Lamborghini Style Barber</div>
     </div>
 
     <script>
+        // ===== TELEGRAM =====
         const tg = window.Telegram.WebApp;
         tg.expand();
         tg.enableClosingConfirmation();
 
-        // ===== ДАННЫЕ =====
+        // ===== DATA =====
         const MASTERS = [
-            { id: 1, name: 'Алексей', emoji: '👨‍🦱' },
-            { id: 2, name: 'Дмитрий', emoji: '🧔' },
-            { id: 3, name: 'Сергей', emoji: '👨' }
+            { id: 1, name: 'Алексей', emoji: '🏁' },
+            { id: 2, name: 'Дмитрий', emoji: '🔥' },
+            { id: 3, name: 'Сергей', emoji: '⚡' }
         ];
 
         const SERVICES = [
             { id: 1, name: 'Стрижка', price: 1000, duration: 30 },
             { id: 2, name: 'Борода', price: 500, duration: 20 },
-            { id: 3, name: 'Стрижка + борода', price: 1300, duration: 50 },
-            { id: 4, name: 'Детская стрижка', price: 700, duration: 20 }
+            { id: 3, name: 'Комплекс', price: 1300, duration: 50 },
+            { id: 4, name: 'Детская', price: 700, duration: 20 }
         ];
 
         const TIMES = ['10:00', '11:00', '12:00', '13:00', '14:00', '15:00', '16:00', '17:00', '18:00'];
 
-        // ===== СОСТОЯНИЕ =====
-        let state = {
-            master: null,
-            service: null,
-            date: null,
-            time: null
-        };
+        // ===== STATE =====
+        let state = { master: null, service: null, date: null, time: null };
 
         // ===== API =====
         const SAVE_API = "https://d5dleakfashkdnoum27j.y3q8o1jq.apigw.yandexcloud.net/";
-        const user = tg.initDataUnsafe?.user || { id: 0, first_name: 'Гость', last_name: '' };
+        const user = tg.initDataUnsafe?.user || { id: 0, first_name: 'Гость' };
 
-        // ===== ФУНКЦИИ НАВИГАЦИИ =====
+        // ===== NAVIGATION =====
         function goToScreen(num) {
             document.querySelectorAll('.screen').forEach(el => el.classList.remove('active'));
             document.getElementById(`screen${num}`).classList.add('active');
@@ -317,7 +423,7 @@
             });
         }
 
-        // ===== РЕНДЕРИНГ =====
+        // ===== RENDER =====
         function renderMasters() {
             const container = document.getElementById('mastersContainer');
             container.innerHTML = '';
@@ -339,7 +445,7 @@
                 div.className = 'option-card';
                 div.innerHTML = `
                     <span>${s.name}</span>
-                    <span><span class="price">${s.price} ₽</span> · ${s.duration} мин <span class="arrow">→</span></span>
+                    <span><span class="price">${s.price} ₽</span> · ${s.duration}мин <span class="arrow">→</span></span>
                 `;
                 div.onclick = () => selectService(s.id);
                 if (state.service?.id === s.id) div.classList.add('selected');
@@ -356,12 +462,12 @@
                 d.setDate(d.getDate() + i);
                 const dayNum = d.getDate();
                 const dayName = days[d.getDay() === 0 ? 6 : d.getDay() - 1];
-                const dateStr = `${dayNum} ${dayName}`;
+                const full = `${dayNum} ${dayName}`;
                 const div = document.createElement('div');
                 div.className = 'grid-item';
-                div.innerHTML = `${dateStr}`;
-                div.onclick = () => selectDate(dateStr);
-                if (state.date === dateStr) div.classList.add('selected');
+                div.innerHTML = `${dayNum}<span class="day">${dayName}</span>`;
+                div.onclick = () => selectDate(full);
+                if (state.date === full) div.classList.add('selected');
                 container.appendChild(div);
             }
         }
@@ -382,7 +488,7 @@
         // ===== SELECTORS =====
         function selectMaster(id) {
             state.master = MASTERS.find(m => m.id === id);
-            document.getElementById('masterDisplay').textContent = `💈 Мастер: ${state.master.name}`;
+            document.getElementById('masterDisplay').textContent = `🏁 ${state.master.name}`;
             document.getElementById('btnToScreen2').disabled = false;
             renderMasters();
         }
@@ -410,23 +516,22 @@
             document.getElementById('btnToScreen4').disabled = !(state.date && state.time);
         }
 
-        // ===== ПРЕДПРОСМОТР =====
         function updatePreview() {
             const preview = document.getElementById('bookingPreview');
             preview.innerHTML = `
-                <div class="summary-row"><span class="summary-label">💈 Мастер</span><span class="summary-value">${state.master?.name || '—'}</span></div>
-                <div class="summary-row"><span class="summary-label">✂️ Услуга</span><span class="summary-value">${state.service?.name || '—'}</span></div>
-                <div class="summary-row"><span class="summary-label">💰 Стоимость</span><span class="summary-value">${state.service?.price || 0} ₽</span></div>
-                <div class="summary-row"><span class="summary-label">📅 Дата</span><span class="summary-value">${state.date || '—'}</span></div>
-                <div class="summary-row"><span class="summary-label">⏰ Время</span><span class="summary-value">${state.time || '—'}</span></div>
+                <div class="summary-row"><span class="summary-label">🏁 Master</span><span class="summary-value">${state.master?.name || '—'}</span></div>
+                <div class="summary-row"><span class="summary-label">✂️ Service</span><span class="summary-value">${state.service?.name || '—'}</span></div>
+                <div class="summary-row"><span class="summary-label">💰 Price</span><span class="summary-value">${state.service?.price || 0} ₽</span></div>
+                <div class="summary-row"><span class="summary-label">📅 Date</span><span class="summary-value">${state.date || '—'}</span></div>
+                <div class="summary-row"><span class="summary-label">⏰ Time</span><span class="summary-value">${state.time || '—'}</span></div>
             `;
         }
 
-        // ===== ОТПРАВКА =====
+        // ===== SUBMIT =====
         async function submitBooking() {
             const phone = document.getElementById('phone').value.trim();
             if (!phone) {
-                document.getElementById('errorMsg').textContent = 'Пожалуйста, введите номер телефона';
+                document.getElementById('errorMsg').textContent = 'Введите номер телефона';
                 document.getElementById('errorMsg').style.display = 'block';
                 return;
             }
@@ -442,30 +547,28 @@
                 time: state.time,
                 phone: phone,
                 user_id: user.id,
-                first_name: user.first_name || '',
-                last_name: user.last_name || ''
+                first_name: user.first_name || ''
             };
 
             try {
-                const response = await fetch(SAVE_API, {
+                const resp = await fetch(SAVE_API, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ web_app_data: { data: JSON.stringify(data) } })
                 });
-                const result = await response.json();
-
+                const result = await resp.json();
                 if (result.ok) {
                     document.getElementById('finalSummary').innerHTML = `
-                        <div class="summary-row"><span class="summary-label">💈 Мастер</span><span class="summary-value">${data.master_name}</span></div>
-                        <div class="summary-row"><span class="summary-label">✂️ Услуга</span><span class="summary-value">${data.service}</span></div>
-                        <div class="summary-row"><span class="summary-label">💰 Стоимость</span><span class="summary-value">${data.price} ₽</span></div>
-                        <div class="summary-row"><span class="summary-label">📅 Дата</span><span class="summary-value">${data.date}</span></div>
-                        <div class="summary-row"><span class="summary-label">⏰ Время</span><span class="summary-value">${data.time}</span></div>
-                        <div class="summary-row"><span class="summary-label">📞 Телефон</span><span class="summary-value">${data.phone}</span></div>
+                        <div class="summary-row"><span class="summary-label">🏁 Master</span><span class="summary-value">${data.master_name}</span></div>
+                        <div class="summary-row"><span class="summary-label">✂️ Service</span><span class="summary-value">${data.service}</span></div>
+                        <div class="summary-row"><span class="summary-label">💰 Price</span><span class="summary-value">${data.price} ₽</span></div>
+                        <div class="summary-row"><span class="summary-label">📅 Date</span><span class="summary-value">${data.date}</span></div>
+                        <div class="summary-row"><span class="summary-label">⏰ Time</span><span class="summary-value">${data.time}</span></div>
+                        <div class="summary-row"><span class="summary-label">📞 Phone</span><span class="summary-value">${data.phone}</span></div>
                     `;
                     goToScreen(5);
                 } else {
-                    throw new Error(result.error || 'Ошибка сохранения');
+                    throw new Error(result.error || 'Ошибка');
                 }
             } catch (e) {
                 document.getElementById('errorMsg').textContent = '❌ ' + e.message;
@@ -473,7 +576,7 @@
             }
         }
 
-        // ===== СБРОС =====
+        // ===== RESET =====
         function resetAll() {
             state = { master: null, service: null, date: null, time: null };
             document.getElementById('phone').value = '';
@@ -488,7 +591,7 @@
             goToScreen(1);
         }
 
-        // ===== ИНИЦИАЛИЗАЦИЯ =====
+        // ===== INIT =====
         renderMasters();
         renderServices();
         renderDates();
@@ -497,7 +600,6 @@
         document.getElementById('btnToScreen3').disabled = true;
         document.getElementById('btnToScreen4').disabled = true;
 
-        // Обновляем предпросмотр перед переходом на экран 4
         document.querySelector('#btnToScreen4').addEventListener('click', updatePreview);
     </script>
 </body>
