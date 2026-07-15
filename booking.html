@@ -2,7 +2,7 @@
 <html lang="ru">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
   <title>Lamborghini Barbershop</title>
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
   <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800;900&display=swap" rel="stylesheet">
@@ -17,51 +17,48 @@
       font-family: 'Montserrat', sans-serif;
       background: #0a0a0a;
       color: #fff;
-      height: 100vh;
-      overflow: hidden;
+      min-height: 100vh;
+      overflow-y: auto;
       display: flex;
       align-items: center;
       justify-content: center;
+      padding: 0;
     }
 
-    /* Контейнер приложения */
     .app {
       width: 100%;
       max-width: 420px;
-      height: 100vh;
-      max-height: 780px;
+      min-height: 100vh;
       background: #0f0f0f;
       border-radius: 40px;
-      overflow: hidden;
+      overflow-y: auto;
       position: relative;
       box-shadow: 0 0 60px rgba(248, 195, 0, 0.15);
       border: 1px solid #1f1f1f;
+      padding: 24px 20px 100px;
     }
 
-    /* Фоновый слой с размытым изображением */
     .bg-layer {
-      position: absolute;
+      position: fixed;
       top: 0;
       left: 0;
       width: 100%;
       height: 100%;
       background: url('https://images.unsplash.com/photo-1503951914875-452162b0f3f1?w=600') center/cover no-repeat;
-      opacity: 0.15;
-      filter: blur(3px);
+      opacity: 0.1;
+      filter: blur(4px);
       z-index: 0;
+      pointer-events: none;
     }
 
-    /* Контент поверх фона */
     .content {
       position: relative;
       z-index: 1;
-      padding: 24px 20px 100px;
-      height: 100%;
       display: flex;
       flex-direction: column;
+      min-height: 100%;
     }
 
-    /* ===== ШАПКА ===== */
     .header {
       display: flex;
       justify-content: space-between;
@@ -75,7 +72,6 @@
       letter-spacing: 4px;
       color: #f8c300;
       text-transform: uppercase;
-      text-shadow: 0 0 30px rgba(248, 195, 0, 0.3);
     }
 
     .header .step-badge {
@@ -89,7 +85,6 @@
       letter-spacing: 1px;
     }
 
-    /* ===== ПРОГРЕСС ===== */
     .progress {
       display: flex;
       gap: 6px;
@@ -114,7 +109,6 @@
       opacity: 0.4;
     }
 
-    /* ===== ЗАГОЛОВКИ ЭКРАНОВ ===== */
     .screen-title {
       font-size: 12px;
       color: #f8c300;
@@ -131,7 +125,6 @@
       letter-spacing: 0.5px;
     }
 
-    /* ===== КАРТОЧКИ ВЫБОРА ===== */
     .card {
       background: rgba(255, 255, 255, 0.04);
       backdrop-filter: blur(6px);
@@ -185,7 +178,6 @@
       margin-left: 12px;
     }
 
-    /* ===== СЕТКА КАЛЕНДАРЯ ===== */
     .calendar-grid {
       display: grid;
       grid-template-columns: repeat(7, 1fr);
@@ -228,7 +220,6 @@
       cursor: not-allowed;
     }
 
-    /* ===== СЕТКА ВРЕМЕНИ ===== */
     .time-grid {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
@@ -259,7 +250,6 @@
       box-shadow: 0 0 30px rgba(248, 195, 0, 0.1);
     }
 
-    /* ===== КНОПКИ ===== */
     .nav-buttons {
       display: flex;
       gap: 12px;
@@ -313,7 +303,6 @@
       transform: scale(0.96);
     }
 
-    /* ===== ЭКРАНЫ ===== */
     .screen {
       display: none;
       flex-direction: column;
@@ -336,7 +325,6 @@
       }
     }
 
-    /* ===== ПОДТВЕРЖДЕНИЕ ===== */
     .summary-card {
       background: rgba(255, 255, 255, 0.04);
       backdrop-filter: blur(6px);
@@ -370,7 +358,6 @@
       font-size: 14px;
     }
 
-    /* ===== ПОЛЯ ===== */
     input {
       width: 100%;
       padding: 16px;
@@ -399,7 +386,6 @@
       margin-top: 8px;
     }
 
-    /* ===== ФУТЕР ===== */
     .footer {
       margin-top: 16px;
       text-align: center;
@@ -408,35 +394,17 @@
       letter-spacing: 2px;
       text-transform: uppercase;
     }
-
-    /* ===== АНИМАЦИЯ ПАРАЛЛАКС (имитация) ===== */
-    .parallax-icon {
-      font-size: 48px;
-      opacity: 0.08;
-      position: absolute;
-      bottom: 20px;
-      right: 20px;
-      transform: rotate(-8deg);
-      pointer-events: none;
-    }
   </style>
 </head>
 <body>
-
+  <div class="bg-layer"></div>
   <div class="app">
-    <!-- Фоновый слой с картинкой -->
-    <div class="bg-layer"></div>
-    <div class="parallax-icon">✂️</div>
-
     <div class="content">
-
-      <!-- ===== ШАПКА ===== -->
       <div class="header">
         <span class="brand">Lamborghini</span>
         <span class="step-badge" id="stepBadge">Шаг 1 / 4</span>
       </div>
 
-      <!-- ===== ПРОГРЕСС ===== -->
       <div class="progress" id="progress">
         <div class="progress-bar active" data-step="1"></div>
         <div class="progress-bar" data-step="2"></div>
@@ -444,9 +412,7 @@
         <div class="progress-bar" data-step="4"></div>
       </div>
 
-      <!-- ============================================================ -->
-      <!-- ЭКРАН 1: МАСТЕР -->
-      <!-- ============================================================ -->
+      <!-- ЭКРАН 1 -->
       <div id="screen1" class="screen active">
         <div class="screen-title">Шаг 1</div>
         <div class="screen-subtitle">Выбор мастера</div>
@@ -457,9 +423,7 @@
         </div>
       </div>
 
-      <!-- ============================================================ -->
-      <!-- ЭКРАН 2: УСЛУГИ -->
-      <!-- ============================================================ -->
+      <!-- ЭКРАН 2 -->
       <div id="screen2" class="screen">
         <div class="screen-title">Шаг 2</div>
         <div class="screen-subtitle">Выбор услуги</div>
@@ -471,29 +435,22 @@
         </div>
       </div>
 
-      <!-- ============================================================ -->
-      <!-- ЭКРАН 3: ДАТА / ВРЕМЯ -->
-      <!-- ============================================================ -->
+      <!-- ЭКРАН 3 -->
       <div id="screen3" class="screen">
         <div class="screen-title">Шаг 3</div>
         <div class="screen-subtitle">Дата и время</div>
         <div id="serviceDisplay" style="font-size:13px; color:#888; margin-bottom:8px;"></div>
-
         <div style="font-size:11px; color:#666; text-transform:uppercase; letter-spacing:1px; margin-bottom:4px;">Выберите дату</div>
         <div id="datesContainer" class="calendar-grid"></div>
-
         <div style="font-size:11px; color:#666; text-transform:uppercase; letter-spacing:1px; margin:4px 0 4px;">Выберите время</div>
         <div id="timesContainer" class="time-grid"></div>
-
         <div class="nav-buttons">
           <button class="btn-secondary" onclick="goToScreen(2)">← Назад</button>
           <button class="btn-primary" id="btnToScreen4" disabled onclick="goToScreen(4)">Далее →</button>
         </div>
       </div>
 
-      <!-- ============================================================ -->
-      <!-- ЭКРАН 4: ПОДТВЕРЖДЕНИЕ -->
-      <!-- ============================================================ -->
+      <!-- ЭКРАН 4 -->
       <div id="screen4" class="screen">
         <div class="screen-title">Шаг 4</div>
         <div class="screen-subtitle">Подтверждение</div>
@@ -506,9 +463,7 @@
         </div>
       </div>
 
-      <!-- ============================================================ -->
-      <!-- ЭКРАН 5: ФИНАЛ -->
-      <!-- ============================================================ -->
+      <!-- ЭКРАН 5 -->
       <div id="screen5" class="screen">
         <div class="screen-title">Запись подтверждена!</div>
         <div class="screen-subtitle" style="color:#f8c300;">Ждём вас</div>
@@ -517,22 +472,16 @@
         <div class="footer">Lamborghini Barbershop</div>
       </div>
 
-    </div><!-- /content -->
-  </div><!-- /app -->
+    </div>
+  </div>
 
   <script>
-    // ============================================================
-    // TELEGRAM
-    // ============================================================
     const tg = window.Telegram.WebApp;
     if (tg) {
       tg.expand();
       tg.enableClosingConfirmation();
     }
 
-    // ============================================================
-    // ДАННЫЕ
-    // ============================================================
     const MASTERS = [
       { id: 1, name: 'Alex' },
       { id: 2, name: 'Mario' },
@@ -549,9 +498,6 @@
 
     const TIMES = ['10:00', '10:30', '11:00', '11:30', '12:00', '12:30', '13:00', '14:30', '15:00', '16:00', '17:00', '18:00'];
 
-    // ============================================================
-    // СОСТОЯНИЕ
-    // ============================================================
     let state = {
       master: null,
       service: null,
@@ -559,15 +505,9 @@
       time: null
     };
 
-    // ============================================================
-    // API
-    // ============================================================
     const SAVE_API = "https://d5dleakfashkdnoum27j.y3q8o1jq.apigw.yandexcloud.net/";
     const user = (tg && tg.initDataUnsafe?.user) || { id: 0, first_name: 'Гость' };
 
-    // ============================================================
-    // НАВИГАЦИЯ
-    // ============================================================
     function goToScreen(num) {
       document.querySelectorAll('.screen').forEach(el => el.classList.remove('active'));
       document.getElementById(`screen${num}`).classList.add('active');
@@ -588,9 +528,6 @@
       document.getElementById('stepBadge').innerText = `Шаг ${step} / 4`;
     }
 
-    // ============================================================
-    // РЕНДЕРИНГ
-    // ============================================================
     function renderMasters() {
       const container = document.getElementById('mastersContainer');
       container.innerHTML = '';
@@ -611,12 +548,12 @@
         const div = document.createElement('div');
         div.className = 'card';
         div.innerHTML = `
-            <span class="left">${s.name}</span>
-            <span class="right">
-              <div class="duration">${s.duration} МИН</div>
-              <div class="price">${s.price.toLocaleString()} ₽</div>
-            </span>
-          `;
+          <span class="left">${s.name}</span>
+          <span class="right">
+            <div class="duration">${s.duration} МИН</div>
+            <div class="price">${s.price.toLocaleString()} ₽</div>
+          </span>
+        `;
         div.onclick = () => selectService(s.id);
         if (state.service?.id === s.id) div.classList.add('selected');
         container.appendChild(div);
@@ -631,14 +568,12 @@
       const currentYear = today.getFullYear();
       const monthNames = ['ЯНВ', 'ФЕВ', 'МАР', 'АПР', 'МАЙ', 'ИЮН', 'ИЮЛ', 'АВГ', 'СЕН', 'ОКТ', 'НОЯ', 'ДЕК'];
 
-      // Заголовок месяца
       const header = document.createElement('div');
       header.style.cssText =
         'grid-column:span 7; text-align:center; font-size:14px; font-weight:700; color:#f8c300; letter-spacing:2px; padding:4px 0;';
       header.textContent = `${monthNames[currentMonth]} ${currentYear}`;
       container.appendChild(header);
 
-      // Дни недели
       const dayNames = ['ПН', 'ВТ', 'СР', 'ЧТ', 'ПТ', 'СБ', 'ВС'];
       dayNames.forEach(name => {
         const div = document.createElement('div');
@@ -648,7 +583,6 @@
         container.appendChild(div);
       });
 
-      // Пустые ячейки
       const firstDay = new Date(currentYear, currentMonth, 1).getDay();
       const emptyDays = firstDay === 0 ? 6 : firstDay - 1;
       for (let i = 0; i < emptyDays; i++) {
@@ -657,35 +591,28 @@
         container.appendChild(div);
       }
 
-      // Дни месяца
       const daysInMonth = new Date(currentYear, currentMonth + 1, 0).getDate();
       const todayDate = today.getDate();
 
       for (let i = 1; i <= daysInMonth; i++) {
         const div = document.createElement('div');
         div.className = 'cal-day';
-
         const dayNum = document.createElement('div');
         dayNum.style.fontSize = '16px';
         dayNum.style.fontWeight = '600';
         dayNum.textContent = i;
-
         const dayName = document.createElement('div');
         dayName.className = 'day-name';
         const dayOfWeek = new Date(currentYear, currentMonth, i).getDay();
         dayName.textContent = dayNames[dayOfWeek === 0 ? 6 : dayOfWeek - 1];
-
         div.appendChild(dayNum);
         div.appendChild(dayName);
-
         const dateStr = `${i} ${dayName.textContent}`;
-
         if (i < todayDate) {
           div.classList.add('past');
         } else {
           div.onclick = () => selectDate(dateStr);
         }
-
         if (state.date === dateStr) div.classList.add('selected');
         container.appendChild(div);
       }
@@ -704,9 +631,6 @@
       });
     }
 
-    // ============================================================
-    // ВЫБОР
-    // ============================================================
     function selectMaster(id) {
       state.master = MASTERS.find(m => m.id === id);
       document.getElementById('masterDisplay').textContent = `💈 Мастер: ${state.master.name}`;
@@ -737,24 +661,18 @@
       document.getElementById('btnToScreen4').disabled = !(state.date && state.time);
     }
 
-    // ============================================================
-    // ПРЕДПРОСМОТР
-    // ============================================================
     function updatePreview() {
       const preview = document.getElementById('bookingPreview');
       preview.innerHTML = `
-          <div class="summary-row"><span class="summary-label">Мастер</span><span class="summary-value">${state.master?.name || '—'}</span></div>
-          <div class="summary-row"><span class="summary-label">Услуга</span><span class="summary-value">${state.service?.name || '—'}</span></div>
-          <div class="summary-row"><span class="summary-label">Длительность</span><span class="summary-value">${state.service?.duration || 0} МИН</span></div>
-          <div class="summary-row"><span class="summary-label">Стоимость</span><span class="summary-value">${state.service?.price?.toLocaleString() || 0} ₽</span></div>
-          <div class="summary-row"><span class="summary-label">Дата</span><span class="summary-value">${state.date || '—'}</span></div>
-          <div class="summary-row"><span class="summary-label">Время</span><span class="summary-value">${state.time || '—'}</span></div>
-        `;
+        <div class="summary-row"><span class="summary-label">Мастер</span><span class="summary-value">${state.master?.name || '—'}</span></div>
+        <div class="summary-row"><span class="summary-label">Услуга</span><span class="summary-value">${state.service?.name || '—'}</span></div>
+        <div class="summary-row"><span class="summary-label">Длительность</span><span class="summary-value">${state.service?.duration || 0} МИН</span></div>
+        <div class="summary-row"><span class="summary-label">Стоимость</span><span class="summary-value">${state.service?.price?.toLocaleString() || 0} ₽</span></div>
+        <div class="summary-row"><span class="summary-label">Дата</span><span class="summary-value">${state.date || '—'}</span></div>
+        <div class="summary-row"><span class="summary-label">Время</span><span class="summary-value">${state.time || '—'}</span></div>
+      `;
     }
 
-    // ============================================================
-    // ОТПРАВКА
-    // ============================================================
     async function submitBooking() {
       const phone = document.getElementById('phone').value.trim();
       if (!phone) {
@@ -788,14 +706,14 @@
 
         if (result.ok) {
           document.getElementById('finalSummary').innerHTML = `
-              <div class="summary-row"><span class="summary-label">Мастер</span><span class="summary-value">${data.master_name}</span></div>
-              <div class="summary-row"><span class="summary-label">Услуга</span><span class="summary-value">${data.service}</span></div>
-              <div class="summary-row"><span class="summary-label">Длительность</span><span class="summary-value">${data.duration} МИН</span></div>
-              <div class="summary-row"><span class="summary-label">Стоимость</span><span class="summary-value">${data.price.toLocaleString()} ₽</span></div>
-              <div class="summary-row"><span class="summary-label">Дата</span><span class="summary-value">${data.date}</span></div>
-              <div class="summary-row"><span class="summary-label">Время</span><span class="summary-value">${data.time}</span></div>
-              <div class="summary-row"><span class="summary-label">Телефон</span><span class="summary-value">${data.phone}</span></div>
-            `;
+            <div class="summary-row"><span class="summary-label">Мастер</span><span class="summary-value">${data.master_name}</span></div>
+            <div class="summary-row"><span class="summary-label">Услуга</span><span class="summary-value">${data.service}</span></div>
+            <div class="summary-row"><span class="summary-label">Длительность</span><span class="summary-value">${data.duration} МИН</span></div>
+            <div class="summary-row"><span class="summary-label">Стоимость</span><span class="summary-value">${data.price.toLocaleString()} ₽</span></div>
+            <div class="summary-row"><span class="summary-label">Дата</span><span class="summary-value">${data.date}</span></div>
+            <div class="summary-row"><span class="summary-label">Время</span><span class="summary-value">${data.time}</span></div>
+            <div class="summary-row"><span class="summary-label">Телефон</span><span class="summary-value">${data.phone}</span></div>
+          `;
           goToScreen(5);
         } else {
           throw new Error(result.error || 'Ошибка сохранения');
@@ -806,9 +724,6 @@
       }
     }
 
-    // ============================================================
-    // СБРОС
-    // ============================================================
     function resetAll() {
       state = { master: null, service: null, date: null, time: null };
       document.getElementById('phone').value = '';
@@ -823,14 +738,8 @@
       goToScreen(1);
     }
 
-    // ============================================================
-    // Событие для предпросмотра
-    // ============================================================
     document.querySelector('#btnToScreen4').addEventListener('click', updatePreview);
 
-    // ============================================================
-    // ЗАПУСК
-    // ============================================================
     renderMasters();
     renderServices();
     renderDates();
