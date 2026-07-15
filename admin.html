@@ -173,10 +173,10 @@ const API_URL = 'https://functions.yandexcloud.net/d4e4p2aipckh173bon88';
       // Временно используем прямой запрос к YDB через промежуточную функцию (создадим позже)
       // ПОКА ЧИТАЕМ ИЗ ТАБЛИЦЫ appointments
       const res = await fetch(API_URL, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ action: 'getAll' })
-      });
+  method: 'POST',
+  headers: { 'Content-Type': 'application/json' },
+  body: JSON.stringify({ action: 'getAll' })
+});
       const data = await res.json();
 
       if (data.bookings && data.bookings.length > 0) {
