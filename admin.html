@@ -138,7 +138,7 @@
 </div>
 
 <script>
-const SAVE_API = 'https://functions.yandexcloud.net/d4e4p2aipckh173bon88';
+  const API_URL = 'https://functions.yandexcloud.net/d4e4p2aipckh173bon88';
 
   async function loadData() {
     const statsEl = document.getElementById('stats');
@@ -162,14 +162,13 @@ const SAVE_API = 'https://functions.yandexcloud.net/d4e4p2aipckh173bon88';
 
         let rows = '';
         data.bookings.forEach(b => {
-          const date = new Date(b.created_at * 1000).toLocaleString('ru-RU');
           rows += `
             <tr>
               <td>${b.id}</td>
               <td>${b.user_id || '—'}</td>
-              <td>${b.service_id || '—'}</td>
+              <td>${b.service_name || '—'}</td>
               <td><span class="badge">${b.status || 'confirmed'}</span></td>
-              <td>${date}</td>
+              <td>${b.created_at || '—'}</td>
             </tr>
           `;
         });
